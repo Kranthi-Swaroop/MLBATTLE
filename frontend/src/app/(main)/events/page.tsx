@@ -26,15 +26,6 @@ interface Event {
     isOngoing: boolean;
 }
 
-// Gradient colors for events (cycle through these)
-const gradients = [
-    'linear-gradient(135deg, #8B5CF6 0%, #EC4899 100%)',
-    'linear-gradient(135deg, #06B6D4 0%, #3B82F6 100%)',
-    'linear-gradient(135deg, #F59E0B 0%, #EF4444 100%)',
-    'linear-gradient(135deg, #10B981 0%, #14B8A6 100%)',
-    'linear-gradient(135deg, #8B5CF6 0%, #6366F1 100%)',
-];
-
 const statusFilters = ['All', 'Live', 'Upcoming', 'Ended'];
 
 export default function EventsPage() {
@@ -166,8 +157,8 @@ export default function EventsPage() {
                         <EventCard
                             key={event._id}
                             event={event}
-                            gradient={gradients[index % gradients.length]}
                             status={getEventStatus(event)}
+                            colorIndex={index % 4}
                         />
                     ))}
                 </div>
@@ -186,15 +177,22 @@ export default function EventsPage() {
 
 interface EventCardProps {
     event: Event;
-    gradient: string;
     status: 'live' | 'upcoming' | 'ended';
+    colorIndex: number;
 }
 
-function EventCard({ event, gradient, status }: EventCardProps) {
+const colorClasses = [
+    'colorPurple',
+    'colorRed',
+    'colorYellow',
+    'colorGreen'
+];
+
+function EventCard({ event, status, colorIndex }: EventCardProps) {
     const getStatusLabel = () => {
         switch (status) {
-            case 'live': return '🔴 Live Now';
-            case 'upcoming': return '📅 Coming Soon';
+            case 'live': return '🔴 Live';
+            case 'upcoming': return '📅 Soon';
             case 'ended': return '✓ Ended';
             default: return '';
         }
@@ -209,56 +207,35 @@ function EventCard({ event, gradient, status }: EventCardProps) {
         }
     };
 
-    const formatDate = (dateStr: string) => {
-        return new Date(dateStr).toLocaleDateString('en-US', {
-            month: 'short',
-            day: 'numeric',
-            year: 'numeric'
-        });
-    };
+    const colorClass = styles[colorClasses[colorIndex] as keyof typeof styles];
 
-    // Generate tags based on event properties
-    const tags = [];
-    if (status === 'live') tags.push('Active');
-    if (event.competitionCount > 3) tags.push('Multi-Track');
-    if (event.competitionCount <= 3) tags.push('Focused');
+    const startDate = new Date(event.startDate);
+    const month = startDate.toLocaleDateString('en-US', { month: 'short' }).toUpperCase();
+    const day = startDate.getDate();
 
     return (
-        <Link href={`/events/${event._id}`} className={styles.eventCard}>
-            <div className={styles.cardBanner} style={{ background: gradient }}>
-                <div className={styles.bannerOverlay}>
+        <div className={styles.cardParent}>
+            <Link href={`/events/${event._id}`} className={`${styles.eventCard} ${colorClass}`}>
+                <div className={styles.contentBox}>
                     <span className={`${styles.eventStatus} ${getStatusClass()}`}>
                         {getStatusLabel()}
                     </span>
-                    <div className={styles.eventTags}>
-                        {tags.map(tag => (
-                            <span key={tag} className={styles.tag}>{tag}</span>
-                        ))}
+                    <h3 className={styles.cardTitle}>{event.name}</h3>
+                    <p className={styles.cardContent}>
+                        {event.description || 'Join this exciting ML competition event!'}
+                    </p>
+                    <div className={styles.cardFooter}>
+                        <span className={styles.competitionCount}>
+                            {event.competitionCount} Competition{event.competitionCount !== 1 ? 's' : ''}
+                        </span>
+                        <span className={styles.seeMore}>View Event →</span>
                     </div>
                 </div>
-            </div>
-
-            <div className={styles.cardBody}>
-                <h3 className={styles.eventTitle}>{event.name}</h3>
-                <p className={styles.eventDescription}>
-                    {event.description || 'Join this exciting ML competition event!'}
-                </p>
-
-                <div className={styles.eventMeta}>
-                    <div className={styles.metaItem}>
-                        <div className={styles.metaValue}>{event.competitionCount}</div>
-                        <div className={styles.metaLabel}>Competitions</div>
-                    </div>
-                    <div className={styles.metaItem}>
-                        <div className={styles.metaValue}>{formatDate(event.startDate)}</div>
-                        <div className={styles.metaLabel}>Starts</div>
-                    </div>
-                    <div className={styles.metaItem}>
-                        <div className={styles.metaValue}>{formatDate(event.endDate)}</div>
-                        <div className={styles.metaLabel}>Ends</div>
-                    </div>
+                <div className={styles.dateBox}>
+                    <span className={styles.month}>{month}</span>
+                    <span className={styles.date}>{day}</span>
                 </div>
-            </div>
-        </Link>
+            </Link>
+        </div>
     );
 }
