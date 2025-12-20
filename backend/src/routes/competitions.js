@@ -39,6 +39,7 @@ router.get('/', async (req, res) => {
 // @desc    Get competition by ID with leaderboard
 // @access  Public
 router.get('/:id', async (req, res) => {
+    console.log('GET /api/competitions/:id called with:', req.params.id);
     try {
         // Validate ObjectId format
         if (!req.params.id.match(/^[0-9a-fA-F]{24}$/)) {
@@ -50,7 +51,8 @@ router.get('/:id', async (req, res) => {
 
         const competition = await Competition.findById(req.params.id)
             .populate('event', 'name startDate endDate')
-            .populate('leaderboard.platformUser', 'name kaggleUsername');
+            .populate('leaderboard.platformUser', 'name kaggleUsername')
+            .lean();
 
         if (!competition) {
             return res.status(404).json({
@@ -67,7 +69,7 @@ router.get('/:id', async (req, res) => {
         res.json({
             success: true,
             data: {
-                ...competition.toObject(),
+                ...competition,
                 registrationCount
             }
         });
