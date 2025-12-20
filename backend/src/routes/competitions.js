@@ -40,6 +40,14 @@ router.get('/', async (req, res) => {
 // @access  Public
 router.get('/:id', async (req, res) => {
     try {
+        // Validate ObjectId format
+        if (!req.params.id.match(/^[0-9a-fA-F]{24}$/)) {
+            return res.status(400).json({
+                success: false,
+                message: 'Invalid competition ID format'
+            });
+        }
+
         const competition = await Competition.findById(req.params.id)
             .populate('event', 'name startDate endDate')
             .populate('leaderboard.platformUser', 'name kaggleUsername');
@@ -64,9 +72,11 @@ router.get('/:id', async (req, res) => {
             }
         });
     } catch (error) {
+        console.error('Get competition error:', error);
         res.status(500).json({
             success: false,
-            message: 'Server error'
+            message: 'Server error',
+            error: process.env.NODE_ENV === 'development' ? error.message : undefined
         });
     }
 });
