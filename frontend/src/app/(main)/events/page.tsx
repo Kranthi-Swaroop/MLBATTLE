@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import styles from './events.module.css';
+import Squares from '@/components/Squares';
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000/api';
 
@@ -107,6 +108,13 @@ export default function EventsPage() {
 
     return (
         <div className={styles.eventsPage}>
+            <Squares 
+                direction="diagonal"
+                speed={0.5}
+                borderColor="rgba(139, 92, 246, 0.3)"
+                squareSize={50}
+                hoverFillColor="rgba(139, 92, 246, 0.1)"
+            />
             <div className={styles.eventsHeader}>
                 <div className="container">
                     <h1>Events</h1>
