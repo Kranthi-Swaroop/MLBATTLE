@@ -1,5 +1,5 @@
 .features {
-    background: var(--gradient-hero);
+    background: var(--bg-secondary);
 }
 
 .featuresGrid {
@@ -9,7 +9,7 @@
 }
 
 .featureCard {
-    background: var(--bg-white);
+    background: var(--bg-tertiary);
     border-radius: var(--radius-xl);
     padding: var(--space-2xl);
     box-shadow: var(--shadow-md);
@@ -19,7 +19,8 @@
 
 .featureCard:hover {
     transform: translateY(-8px);
-    box-shadow: var(--shadow-xl);
+    box-shadow: var(--shadow-xl), 0 0 30px rgba(139, 92, 246, 0.15);
+    border-color: rgba(139, 92, 246, 0.3);
 }
 
 .featureIcon {
@@ -33,11 +34,13 @@
     font-size: 1.75rem;
     margin-bottom: var(--space-lg);
     color: white;
+    box-shadow: 0 0 20px rgba(139, 92, 246, 0.4);
 }
 
 .featureTitle {
     font-size: 1.25rem;
     margin-bottom: var(--space-md);
+    color: var(--text-primary);
 }
 
 .featureDescription {

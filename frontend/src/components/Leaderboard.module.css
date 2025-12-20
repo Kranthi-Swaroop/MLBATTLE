@@ -3,7 +3,7 @@
 }
 
 .leaderboardContainer {
-    background: var(--bg-white);
+    background: var(--bg-tertiary);
     border-radius: var(--radius-2xl);
     overflow: hidden;
     box-shadow: var(--shadow-lg);
@@ -26,6 +26,7 @@
 
 .leaderboardTitle h3 {
     margin: 0;
+    color: var(--text-primary);
 }
 
 .liveIndicator {
@@ -33,7 +34,8 @@
     align-items: center;
     gap: 6px;
     padding: 0.375rem 0.75rem;
-    background: var(--danger-light);
+    background: rgba(239, 68, 68, 0.15);
+    border: 1px solid rgba(239, 68, 68, 0.3);
     border-radius: var(--radius-full);
     font-size: 0.75rem;
     font-weight: 600;
@@ -46,6 +48,7 @@
     background: var(--danger);
     border-radius: 50%;
     animation: pulse 1.5s infinite;
+    box-shadow: 0 0 8px var(--danger);
 }
 
 @keyframes pulse {
@@ -88,7 +91,7 @@
 }
 
 .leaderboardTable tbody tr:hover {
-    background: rgba(79, 70, 229, 0.02);
+    background: rgba(139, 92, 246, 0.05);
 }
 
 .tableRank {
@@ -100,21 +103,25 @@
     font-weight: 700;
     border-radius: var(--radius-md);
     background: var(--bg-secondary);
+    color: var(--text-primary);
 }
 
 .top1 {
-    background: linear-gradient(135deg, #FEF3C7 0%, #FDE68A 100%);
-    color: #D97706;
+    background: rgba(251, 191, 36, 0.2);
+    color: #FCD34D;
+    border: 1px solid rgba(251, 191, 36, 0.4);
 }
 
 .top2 {
-    background: linear-gradient(135deg, #F1F5F9 0%, #E2E8F0 100%);
-    color: #475569;
+    background: rgba(148, 163, 184, 0.2);
+    color: #CBD5E1;
+    border: 1px solid rgba(148, 163, 184, 0.4);
 }
 
 .top3 {
-    background: linear-gradient(135deg, #FFEDD5 0%, #FED7AA 100%);
-    color: #C2410C;
+    background: rgba(251, 146, 60, 0.2);
+    color: #FB923C;
+    border: 1px solid rgba(251, 146, 60, 0.4);
 }
 
 .tableUser {
@@ -133,10 +140,12 @@
     justify-content: center;
     color: white;
     font-weight: 600;
+    box-shadow: 0 0 10px rgba(139, 92, 246, 0.3);
 }
 
 .tableUserName {
     font-weight: 600;
+    color: var(--text-primary);
 }
 
 .tableUserHandle {
@@ -155,11 +164,12 @@
     align-items: center;
     gap: 4px;
     padding: 0.25rem 0.75rem;
-    background: var(--primary-500);
+    background: var(--gradient-primary);
     color: white;
     font-size: 0.875rem;
     font-weight: 600;
     border-radius: var(--radius-full);
+    box-shadow: 0 0 10px rgba(139, 92, 246, 0.3);
 }
 
 .change {

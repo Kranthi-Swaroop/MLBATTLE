@@ -1,33 +1,11 @@
 .hero {
     min-height: 100vh;
-    background: var(--gradient-hero);
+    background: transparent;
     display: flex;
     align-items: center;
     padding-top: 72px;
     position: relative;
     overflow: hidden;
-}
-
-.hero::before {
-    content: '';
-    position: absolute;
-    top: -50%;
-    right: -20%;
-    width: 800px;
-    height: 800px;
-    background: radial-gradient(circle, rgba(79, 70, 229, 0.1) 0%, transparent 70%);
-    border-radius: 50%;
-}
-
-.hero::after {
-    content: '';
-    position: absolute;
-    bottom: -30%;
-    left: -10%;
-    width: 600px;
-    height: 600px;
-    background: radial-gradient(circle, rgba(124, 58, 237, 0.08) 0%, transparent 70%);
-    border-radius: 50%;
 }
 
 .heroContent {
@@ -47,7 +25,7 @@
     display: inline-flex;
     align-items: center;
     gap: var(--space-sm);
-    background: var(--bg-white);
+    background: rgba(139, 92, 246, 0.15);
     padding: 0.5rem 1rem;
     border-radius: var(--radius-full);
     font-size: 0.875rem;
@@ -55,7 +33,8 @@
     color: var(--primary-500);
     box-shadow: var(--shadow-sm);
     margin-bottom: var(--space-lg);
-    border: 1px solid var(--border-light);
+    border: 1px solid rgba(139, 92, 246, 0.3);
+    backdrop-filter: blur(10px);
 }
 
 .heroBadge .dot {
@@ -64,6 +43,7 @@
     background: var(--success);
     border-radius: 50%;
     animation: pulse 2s infinite;
+    box-shadow: 0 0 10px var(--success);
 }
 
 @keyframes pulse {
@@ -84,6 +64,8 @@
     font-size: 3.5rem;
     margin-bottom: var(--space-lg);
     line-height: 1.1;
+    color: var(--text-primary);
+    text-shadow: 0 0 40px rgba(139, 92, 246, 0.3);
 }
 
 .highlight {
@@ -134,12 +116,14 @@
 }
 
 .heroCard {
-    background: var(--bg-white);
+    background: rgba(10, 10, 20, 0.4);
     border-radius: var(--radius-2xl);
     padding: var(--space-xl);
-    box-shadow: var(--shadow-xl);
-    border: 1px solid var(--border-light);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+    border: 1px solid rgba(139, 92, 246, 0.2);
+    backdrop-filter: blur(12px);
 }
+
 
 .heroCardHeader {
     display: flex;
@@ -160,11 +144,13 @@
     justify-content: center;
     color: white;
     font-size: 1.5rem;
+    box-shadow: 0 0 20px rgba(139, 92, 246, 0.4);
 }
 
 .heroCardTitle {
     font-size: 1.125rem;
     font-weight: 600;
+    color: var(--text-primary);
 }
 
 .heroCardSubtitle {
@@ -183,15 +169,18 @@
     align-items: center;
     gap: var(--space-md);
     padding: var(--space-md);
-    background: var(--bg-secondary);
+    background: rgba(20, 20, 35, 0.3);
     border-radius: var(--radius-lg);
     transition: var(--transition-fast);
+    border: 1px solid rgba(255, 255, 255, 0.05);
 }
 
 .leaderboardRow:hover {
     transform: translateX(4px);
-    background: rgba(79, 70, 229, 0.05);
+    background: rgba(139, 92, 246, 0.15);
+    border-color: rgba(139, 92, 246, 0.3);
 }
+
 
 .rank {
     width: 32px;
@@ -205,18 +194,21 @@
 }
 
 .gold {
-    background: #FEF3C7;
-    color: #D97706;
+    background: rgba(251, 191, 36, 0.2);
+    color: #FCD34D;
+    border: 1px solid rgba(251, 191, 36, 0.4);
 }
 
 .silver {
-    background: #F1F5F9;
-    color: #475569;
+    background: rgba(148, 163, 184, 0.2);
+    color: #CBD5E1;
+    border: 1px solid rgba(148, 163, 184, 0.4);
 }
 
 .bronze {
-    background: #FFEDD5;
-    color: #C2410C;
+    background: rgba(251, 146, 60, 0.2);
+    color: #FB923C;
+    border: 1px solid rgba(251, 146, 60, 0.4);
 }
 
 .userAvatar {
@@ -230,6 +222,7 @@
     color: white;
     font-weight: 600;
     font-size: 0.875rem;
+    box-shadow: 0 0 10px rgba(139, 92, 246, 0.3);
 }
 
 .userInfo {
@@ -239,6 +232,7 @@
 .userName {
     font-weight: 600;
     font-size: 0.9375rem;
+    color: var(--text-primary);
 }
 
 .userScore {
@@ -248,11 +242,12 @@
 
 .ratingBadge {
     padding: 0.25rem 0.75rem;
-    background: var(--success-light);
+    background: rgba(16, 185, 129, 0.15);
     color: var(--success);
     font-size: 0.8125rem;
     font-weight: 600;
     border-radius: var(--radius-full);
+    border: 1px solid rgba(16, 185, 129, 0.3);
 }
 
 @media (max-width: 1024px) {

@@ -1,5 +1,6 @@
 .cta {
     padding: var(--space-3xl) 0;
+    background: var(--bg-primary);
 }
 
 .ctaContainer {
@@ -9,6 +10,7 @@
     text-align: center;
     position: relative;
     overflow: hidden;
+    box-shadow: 0 0 40px rgba(139, 92, 246, 0.3);
 }
 
 .ctaContainer::before {
@@ -40,13 +42,13 @@
 
 .cta :global(.btn-primary) {
     background: white;
-    color: var(--primary-500);
-    box-shadow: 0 4px 14px 0 rgba(0, 0, 0, 0.2);
+    color: var(--primary-600);
+    box-shadow: 0 4px 14px 0 rgba(0, 0, 0, 0.3);
 }
 
 .cta :global(.btn-primary:hover) {
     transform: translateY(-2px);
-    box-shadow: 0 6px 20px 0 rgba(0, 0, 0, 0.3);
+    box-shadow: 0 6px 20px 0 rgba(0, 0, 0, 0.4);
 }
 
 @media (max-width: 480px) {
