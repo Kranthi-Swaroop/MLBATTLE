@@ -29,8 +29,9 @@ export default function Hero() {
 
                     <div className={styles.heroButtons}>
                         <Link href="/signup" className="btn btn-primary btn-lg">Start Competing</Link>
-                        <Link href="/competitions" className="btn btn-secondary btn-lg">View Competitions</Link>
+                        <Link href="/events" className="btn btn-secondary btn-lg">View Events</Link>
                     </div>
+
 
 
                     <div className={styles.heroStats}>
