@@ -138,7 +138,7 @@ export default function EventsPage() {
                 speed={0.5}
                 borderColor="rgba(139, 92, 246, 0.3)"
                 squareSize={50}
-                hoverFillColor="rgba(139, 92, 246, 0.1)"
+                hoverFillColor="rgba(224, 86, 240)"
             />
             <div className={styles.eventsHeader}>
                 <div className="container">
@@ -234,29 +234,6 @@ function EventCard({ event }: { event: Event }) {
             <div className={styles.cardBody}>
                 <h3 className={styles.eventTitle}>{event.title}</h3>
                 <p className={styles.eventDescription}>{event.description}</p>
-
-                <div className={styles.competitionsList}>
-                    <div className={styles.competitionsHeader}>
-                        <span className={styles.competitionsCount}>
-                            {event.competitions.length} Kaggle Competitions
-                        </span>
-                    </div>
-                    <div className={styles.competitionsPreview}>
-                        {event.competitions.slice(0, 3).map(comp => (
-                            <div key={comp.id} className={styles.compPreviewItem}>
-                                <span className={styles.compTitle}>{comp.title}</span>
-                                <span className={`${styles.compDifficulty} ${styles[comp.difficulty.toLowerCase()]}`}>
-                                    {comp.difficulty}
-                                </span>
-                            </div>
-                        ))}
-                        {event.competitions.length > 3 && (
-                            <div className={styles.moreComps}>
-                                +{event.competitions.length - 3} more competitions
-                            </div>
-                        )}
-                    </div>
-                </div>
 
                 <div className={styles.eventMeta}>
                     <div className={styles.metaItem}>

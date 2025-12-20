@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import styles from './Leaderboard.module.css';
+import Prism from './Prism/Prism';
 
 interface Competitor {
     rank: number;
@@ -39,8 +40,21 @@ export default function Leaderboard() {
     }, []);
 
     return (
-        <section className={`section ${styles.leaderboard}`} id="leaderboard">
-            <div className="container">
+        <section className={`section ${styles.leaderboard}`} id="leaderboard" style={{ position: 'relative' }}>
+            <div style={{ position: 'absolute', inset: 0, zIndex: 0, pointerEvents: 'none' }}>
+                <Prism
+                    animationType="rotate"
+                    timeScale={0.5}
+                    height={4.5}
+                    baseWidth={4}
+                    scale={3}
+                    hueShift={0}
+                    colorFrequency={1}
+                    noise={0}
+                    glow={1}
+                />
+            </div>
+            <div className="container" style={{ position: 'relative', zIndex: 1 }}>
                 <div className="section-header">
                     <span className="section-label">Rankings</span>
                     <h2 className="section-title">Global Leaderboard</h2>
@@ -73,22 +87,30 @@ export default function Leaderboard() {
                         </thead>
                         <tbody>
                             {competitors.map((comp) => (
-                                <tr key={comp.rank}>
+                                <tr key={comp.rank} className={comp.rank <= 3 ? styles[`topRow${comp.rank}`] : ''}>
                                     <td>
                                         <div className={`${styles.tableRank} ${comp.rank <= 3 ? styles[`top${comp.rank}`] : ''}`}>
-                                            {comp.rank}
+                                            {comp.rank === 1 && <span className={styles.medal}>🥇</span>}
+                                            {comp.rank === 2 && <span className={styles.medal}>🥈</span>}
+                                            {comp.rank === 3 && <span className={styles.medal}>🥉</span>}
+                                            {comp.rank > 3 && comp.rank}
                                         </div>
                                     </td>
                                     <td>
                                         <div className={styles.tableUser}>
-                                            <div className={styles.tableUserAvatar}>{comp.initials}</div>
+                                            <div className={`${styles.tableUserAvatar} ${comp.rank <= 3 ? styles[`avatar${comp.rank}`] : ''}`}>
+                                                {comp.initials}
+                                            </div>
                                             <div>
-                                                <div className={styles.tableUserName}>{comp.name}</div>
+                                                <div className={styles.tableUserName}>
+                                                    {comp.rank === 1 && <span className={styles.crown}>👑 </span>}
+                                                    {comp.name}
+                                                </div>
                                                 <div className={styles.tableUserHandle}>{comp.handle}</div>
                                             </div>
                                         </div>
                                     </td>
-                                    <td><span className={styles.rating}>{comp.rating}</span></td>
+                                    <td><span className={`${styles.rating} ${comp.rank <= 3 ? styles[`rating${comp.rank}`] : ''}`}>{comp.rating}</span></td>
                                     <td className={styles.score}>{comp.wins} wins</td>
                                     <td>
                                         <span className={`${styles.change} ${styles[comp.change]}`}>
