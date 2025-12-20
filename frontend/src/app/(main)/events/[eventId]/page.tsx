@@ -157,6 +157,15 @@ export default function EventDetailPage() {
         }
     };
 
+    const getStatusClass = () => {
+        switch (status) {
+            case 'live': return styles.statusLive;
+            case 'upcoming': return styles.statusUpcoming;
+            case 'ended': return styles.statusEnded;
+            default: return '';
+        }
+    };
+
     // Calculate total participants from all competition registrations
     const totalParticipants = event.competitions.reduce((sum, comp) => {
         return sum + (comp.leaderboard?.length || 0);
@@ -170,7 +179,7 @@ export default function EventDetailPage() {
                         <Link href="/events" className={styles.backLink}>← Back to Events</Link>
                         <div className={styles.heroContent}>
                             <div className={styles.heroTags}>
-                                <span className={styles.statusBadge}>{getStatusLabel()}</span>
+                                <span className={`${styles.statusBadge} ${getStatusClass()}`}>{getStatusLabel()}</span>
                                 {event.isActive && <span className={styles.tag}>Active</span>}
                             </div>
                             <h1>{event.name}</h1>
