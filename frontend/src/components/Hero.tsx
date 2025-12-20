@@ -2,6 +2,7 @@
 
 import styles from './Hero.module.css';
 import dynamic from 'next/dynamic';
+import Link from 'next/link';
 
 const Hyperspeed = dynamic(() => import('./Hyperspeed.jsx'), { ssr: false });
 
@@ -27,9 +28,10 @@ export default function Hero() {
                     </p>
 
                     <div className={styles.heroButtons}>
-                        <button className="btn btn-primary btn-lg">Start Competing</button>
-                        <button className="btn btn-secondary btn-lg">View Competitions</button>
+                        <Link href="/signup" className="btn btn-primary btn-lg">Start Competing</Link>
+                        <Link href="/competitions" className="btn btn-secondary btn-lg">View Competitions</Link>
                     </div>
+
 
                     <div className={styles.heroStats}>
                         <div className={styles.statItem}>
