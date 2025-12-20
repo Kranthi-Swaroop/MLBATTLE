@@ -551,3 +551,128 @@
         text-align: center;
     }
 }
+
+/* Kaggle Slug Badge */
+.kaggleSlug {
+    padding: 0.25rem 0.625rem;
+    background: rgba(139, 92, 246, 0.15);
+    border: 1px solid rgba(139, 92, 246, 0.3);
+    border-radius: var(--radius-full);
+    font-size: 0.6875rem;
+    font-weight: 600;
+    color: var(--primary-500);
+    font-family: monospace;
+}
+
+/* Leaderboard Section */
+.leaderboardSection {
+    margin-bottom: 3rem;
+    padding: 1.5rem;
+    background: var(--bg-secondary);
+    border: 1px solid var(--border-light);
+    border-radius: var(--radius-xl);
+}
+
+.leaderboardSection h3 {
+    font-size: 1.25rem;
+    margin-bottom: 0.5rem;
+    color: var(--text-primary);
+}
+
+.syncInfo {
+    font-size: 0.8125rem;
+    color: var(--text-muted);
+    margin-bottom: 1rem;
+}
+
+.leaderboardTable {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 1rem;
+}
+
+.leaderboardTable th,
+.leaderboardTable td {
+    padding: 0.875rem 1rem;
+    text-align: left;
+    border-bottom: 1px solid var(--border-light);
+}
+
+.leaderboardTable th {
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    background: var(--bg-tertiary);
+}
+
+.leaderboardTable td {
+    font-size: 0.9375rem;
+    color: var(--text-primary);
+}
+
+.leaderboardTable tr:hover {
+    background: rgba(139, 92, 246, 0.05);
+}
+
+.leaderboardTable tr.matchedUser {
+    background: rgba(16, 185, 129, 0.1);
+}
+
+.rank {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 28px;
+    height: 28px;
+    border-radius: var(--radius-full);
+    font-weight: 700;
+    font-size: 0.8125rem;
+    background: var(--bg-tertiary);
+    color: var(--text-primary);
+}
+
+.rank.top1 {
+    background: linear-gradient(135deg, #FFD700 0%, #FFA500 100%);
+    color: #000;
+}
+
+.rank.top2 {
+    background: linear-gradient(135deg, #C0C0C0 0%, #A8A8A8 100%);
+    color: #000;
+}
+
+.rank.top3 {
+    background: linear-gradient(135deg, #CD7F32 0%, #B8860B 100%);
+    color: #fff;
+}
+
+.platformBadge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.25rem;
+    padding: 0.25rem 0.5rem;
+    background: rgba(16, 185, 129, 0.15);
+    color: #10B981;
+    border-radius: var(--radius-full);
+    font-size: 0.75rem;
+    font-weight: 600;
+}
+
+.notLinked {
+    color: var(--text-muted);
+}
+
+.noLeaderboard {
+    padding: 2rem;
+    text-align: center;
+    color: var(--text-muted);
+    background: var(--bg-tertiary);
+    border-radius: var(--radius-lg);
+    margin-top: 1rem;
+}
+
+.noLeaderboard p {
+    margin: 0;
+}
