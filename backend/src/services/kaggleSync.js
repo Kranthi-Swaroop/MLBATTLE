@@ -50,8 +50,8 @@ const parseLeaderboardCSV = (csvData, competition) => {
                 rank: parseInt(entry.rank || entry['#'] || i, 10),
                 kaggleUsername: entry.teamname || entry.team || entry.username || '',
                 teamName: entry.teamname || entry.team || '',
-                score: normalizedScore, // Using normalized score for platform leaderboard
-                rawScore: rawScore,     // Keeping raw score for reference
+                score: rawScore,        // Raw Kaggle score for display
+                normalizedScore: normalizedScore, // 0-100 score for internal ranking
                 entries: parseInt(entry.entries || entry.submissions || 0, 10),
                 lastSubmission: entry.lastsubmission ? new Date(entry.lastsubmission) : null
             });
