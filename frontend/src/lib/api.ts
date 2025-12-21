@@ -18,6 +18,7 @@ export interface UserProfile {
     bio?: string;
     github?: string;
     linkedin?: string;
+    role: 'user' | 'admin';
     createdAt: string;
 }
 
@@ -125,6 +126,12 @@ class ApiService {
 
     async getEvent(id: string) {
         return this.request(`/events/${id}`);
+    }
+
+    async deleteEvent(id: string) {
+        return this.request(`/events/${id}`, {
+            method: 'DELETE',
+        });
     }
 
     async createEvent(data: {

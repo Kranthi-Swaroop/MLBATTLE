@@ -1,9 +1,10 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import Link from 'next/link';
 import styles from './events.module.css';
 import Squares from '@/components/Squares';
+import api, { UserProfile } from '@/lib/api';
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000/api';
 
@@ -34,27 +35,91 @@ export default function EventsPage() {
     const [error, setError] = useState<string | null>(null);
     const [selectedStatus, setSelectedStatus] = useState('All');
     const [searchQuery, setSearchQuery] = useState('');
+    const [isAdmin, setIsAdmin] = useState(false);
+    const [hasMounted, setHasMounted] = useState(false);
+    const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
+    const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+    const [isSubmitting, setIsSubmitting] = useState(false);
+    const [formData, setFormData] = useState({
+        name: '',
+        description: '',
+        startDate: '',
+        endDate: ''
+    });
 
     useEffect(() => {
+        setHasMounted(true);
         fetchEvents();
+        checkAdminStatus();
     }, []);
+
+    const checkAdminStatus = async () => {
+        const token = api.getToken();
+        if (token) {
+            const response = await api.getUserProfile();
+            if (response.success && response.data) {
+                setIsAdmin(response.data.role === 'admin');
+            }
+        }
+    };
 
     const fetchEvents = async () => {
         try {
             setLoading(true);
-            const response = await fetch(`${API_BASE_URL}/events`);
-            const data = await response.json();
-
-            if (data.success) {
-                setEvents(data.data);
+            const response = await api.getEvents();
+            if (response.success && response.data) {
+                setEvents(response.data as Event[]);
             } else {
-                setError(data.message || 'Failed to fetch events');
+                setError(response.message || 'Failed to fetch events');
             }
         } catch (err) {
             setError('Failed to connect to server');
             console.error('Error fetching events:', err);
         } finally {
             setLoading(false);
+        }
+    };
+
+    const handleDeleteEvent = async (id: string, name: string) => {
+        console.log(`%c [DELETE CLICK] Event: ${name}, ID: ${id}`, 'background: #EF4444; color: white; font-weight: bold;');
+
+        if (!window.confirm(`Are you sure you want to delete the event "${name}"? This will also delete all associated competitions.`)) {
+            return;
+        }
+
+        try {
+            console.log(`Sending delete request for ID: ${id}`);
+            const response = await api.deleteEvent(id);
+            if (response.success) {
+                console.log('Delete successful');
+                setEvents(prev => prev.filter(e => e._id !== id));
+            } else {
+                console.error('Delete failed:', response.message);
+                alert(response.message || 'Failed to delete event');
+            }
+        } catch (err) {
+            console.error('Error deleting event:', err);
+            alert('Failed to delete event');
+        }
+    };
+
+    const handleCreateEvent = async (e: React.FormEvent) => {
+        e.preventDefault();
+        setIsSubmitting(true);
+        try {
+            const response = await api.createEvent(formData);
+            if (response.success) {
+                setIsCreateModalOpen(false);
+                setFormData({ name: '', description: '', startDate: '', endDate: '' });
+                fetchEvents();
+            } else {
+                alert(response.message || 'Failed to create event');
+            }
+        } catch (err) {
+            console.error('Error creating event:', err);
+            alert('Failed to create event');
+        } finally {
+            setIsSubmitting(false);
         }
     };
 
@@ -99,7 +164,7 @@ export default function EventsPage() {
 
     return (
         <div className={styles.eventsPage}>
-            <Squares 
+            <Squares
                 direction="diagonal"
                 speed={0.5}
                 borderColor="rgba(139, 92, 246, 0.3)"
@@ -108,7 +173,25 @@ export default function EventsPage() {
             />
             <div className={styles.eventsHeader}>
                 <div className="container">
-                    <h1>Events</h1>
+                    <div className={styles.headerTop}>
+                        <h1>Events</h1>
+                        {isAdmin && (
+                            <div className={styles.headerActions}>
+                                <button
+                                    className={styles.manageButton}
+                                    onClick={() => setIsDeleteModalOpen(true)}
+                                >
+                                    🗑️ Manage Events
+                                </button>
+                                <button
+                                    className="btn btn-primary"
+                                    onClick={() => setIsCreateModalOpen(true)}
+                                >
+                                    + Create Event
+                                </button>
+                            </div>
+                        )}
+                    </div>
                     <p>Join exciting ML events featuring multiple Kaggle competitions. Win prizes and climb the leaderboard.</p>
                 </div>
             </div>
@@ -162,6 +245,108 @@ export default function EventsPage() {
                         />
                     ))}
                 </div>
+
+                {/* Create Event Modal */}
+                {isCreateModalOpen && (
+                    <div className={styles.modalOverlay}>
+                        <div className={styles.modalContent}>
+                            <h2>Create New Event</h2>
+                            <form onSubmit={handleCreateEvent}>
+                                <div className={styles.formGroup}>
+                                    <label>Event Name</label>
+                                    <input
+                                        type="text"
+                                        required
+                                        value={formData.name}
+                                        onChange={e => setFormData({ ...formData, name: e.target.value })}
+                                        placeholder="e.g. ML Olympics 2024"
+                                    />
+                                </div>
+                                <div className={styles.formGroup}>
+                                    <label>Description</label>
+                                    <textarea
+                                        value={formData.description}
+                                        onChange={e => setFormData({ ...formData, description: e.target.value })}
+                                        placeholder="Brief description of the event..."
+                                        rows={3}
+                                    />
+                                </div>
+                                <div className={styles.formRow}>
+                                    <div className={styles.formGroup}>
+                                        <label>Start Date</label>
+                                        <input
+                                            type="datetime-local"
+                                            required
+                                            value={formData.startDate}
+                                            onChange={e => setFormData({ ...formData, startDate: e.target.value })}
+                                        />
+                                    </div>
+                                    <div className={styles.formGroup}>
+                                        <label>End Date</label>
+                                        <input
+                                            type="datetime-local"
+                                            required
+                                            value={formData.endDate}
+                                            onChange={e => setFormData({ ...formData, endDate: e.target.value })}
+                                        />
+                                    </div>
+                                </div>
+                                <div className={styles.modalActions}>
+                                    <button
+                                        type="button"
+                                        className="btn btn-secondary"
+                                        onClick={() => setIsCreateModalOpen(false)}
+                                    >
+                                        Cancel
+                                    </button>
+                                    <button
+                                        type="submit"
+                                        className="btn btn-primary"
+                                        disabled={isSubmitting}
+                                    >
+                                        {isSubmitting ? 'Creating...' : 'Create Event'}
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                )}
+
+                {/* Manage Events Modal */}
+                {isDeleteModalOpen && (
+                    <div className={styles.modalOverlay}>
+                        <div className={styles.modalContent}>
+                            <h2>Manage Events</h2>
+                            <div className={styles.eventList}>
+                                {hasMounted && events.map(event => (
+                                    <div key={event._id} className={styles.eventListItem}>
+                                        <div className={styles.eventItemInfo}>
+                                            <h4>{event.name}</h4>
+                                            <p>{new Date(event.startDate).toDateString()} - {new Date(event.endDate).toDateString()}</p>
+                                        </div>
+                                        <button
+                                            className={styles.itemDeleteBtn}
+                                            onClick={() => handleDeleteEvent(event._id, event.name)}
+                                            title="Delete Event"
+                                        >
+                                            🗑️
+                                        </button>
+                                    </div>
+                                ))}
+                                {events.length === 0 && <p>No events to manage.</p>}
+                            </div>
+                            <div className={styles.modalActions}>
+                                <button
+                                    type="button"
+                                    className="btn btn-primary"
+                                    onClick={() => setIsDeleteModalOpen(false)}
+                                >
+                                    Done
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                )}
 
                 {filteredEvents.length === 0 && !error && (
                     <div className={styles.noResults}>
