@@ -4,7 +4,8 @@ const leaderboardEntrySchema = new mongoose.Schema({
     rank: Number,
     kaggleUsername: String,
     teamName: String,
-    score: Number,
+    score: Number, // raw kaggle score
+    normalizedScore: Number, // 0-100 normalized score
     entries: Number,
     lastSubmission: Date,
     // Link to platform user if kaggleUsername matches

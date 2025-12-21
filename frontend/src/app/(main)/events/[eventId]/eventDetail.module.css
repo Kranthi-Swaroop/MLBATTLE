@@ -1317,3 +1317,13 @@
     box-shadow: none !important;
     transform: none !important;
 }
+
+.normalizedValue {
+    font-family: var(--font-mono, monospace);
+    font-weight: 700;
+    color: var(--primary);
+    background: rgba(13, 110, 253, 0.1);
+    padding: 0.1rem 0.4rem;
+    border: 1px solid rgba(13, 110, 253, 0.3);
+    border-radius: 2px;
+}

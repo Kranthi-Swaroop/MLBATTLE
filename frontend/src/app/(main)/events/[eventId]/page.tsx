@@ -15,6 +15,7 @@ interface LeaderboardEntry {
     rank: number;
     kaggleUsername: string;
     score: number;
+    normalizedScore?: number;
     platformUser?: {
         _id: string;
         name: string;
@@ -477,8 +478,8 @@ export default function EventDetailPage() {
                                             <tr>
                                                 <th>Rank</th>
                                                 <th>Team/User</th>
-                                                <th>Score</th>
-                                                <th>Platform User</th>
+                                                <th>Raw Score</th>
+                                                <th>Normalized</th>
                                             </tr>
                                         </thead>
                                         <tbody>
@@ -492,9 +493,9 @@ export default function EventDetailPage() {
                                                     <td>{entry.kaggleUsername}</td>
                                                     <td>{typeof entry.score === 'number' ? entry.score.toFixed(5) : entry.score}</td>
                                                     <td>
-                                                        {entry.platformUser ? (
-                                                            <span className={styles.platformBadge}>
-                                                                ✓ {entry.platformUser.name}
+                                                        {typeof entry.normalizedScore === 'number' ? (
+                                                            <span className={styles.normalizedValue}>
+                                                                {entry.normalizedScore.toFixed(2)}
                                                             </span>
                                                         ) : (
                                                             <span className={styles.notLinked}>-</span>
