@@ -1,10 +1,11 @@
 'use client';
 
 import { useState, useEffect, useRef } from 'react';
+import { useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
 import { Label } from '@/components/ui/Label';
-import { Checkbox } from '@/components/ui/Checkbox';
+
 import styles from './animated-signup.module.css';
 
 interface PupilProps {
@@ -159,10 +160,12 @@ const EyeBall = ({
 };
 
 export default function AnimatedSignupPage() {
+    const router = useRouter();
     const [showPassword, setShowPassword] = useState(false);
     const [showConfirmPassword, setShowConfirmPassword] = useState(false);
     const [name, setName] = useState('');
     const [email, setEmail] = useState('');
+    const [kaggleUsername, setKaggleUsername] = useState('');
     const [password, setPassword] = useState('');
     const [confirmPassword, setConfirmPassword] = useState('');
     const [error, setError] = useState('');
@@ -230,12 +233,12 @@ export default function AnimatedSignupPage() {
 
     // Characters get excited when all fields are filled
     useEffect(() => {
-        if (name && email && password && confirmPassword) {
+        if (name && email && kaggleUsername && password && confirmPassword) {
             setAreCharactersExcited(true);
         } else {
             setAreCharactersExcited(false);
         }
-    }, [name, email, password, confirmPassword]);
+    }, [name, email, kaggleUsername, password, confirmPassword]);
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -253,12 +256,40 @@ export default function AnimatedSignupPage() {
 
         setIsLoading(true);
 
-        await new Promise(resolve => setTimeout(resolve, 300));
+        try {
+            const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000/api';
+            const response = await fetch(`${API_BASE_URL}/auth/register`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    name,
+                    email,
+                    kaggleUsername,
+                    password
+                }),
+            });
 
-        console.log('✅ Sign up successful!');
-        alert(`Welcome to MLBattle, ${name}! Account created successfully!`);
+            const data = await response.json();
 
-        setIsLoading(false);
+            if (data.success) {
+                console.log('✅ Sign up successful!');
+                // Store auth token and user data
+                localStorage.setItem('token', data.data.token);
+                localStorage.setItem('user', JSON.stringify(data.data.user));
+
+                // Redirect to home page
+                router.push('/');
+            } else {
+                setError(data.message || 'Registration failed. Please try again.');
+                setIsLoading(false);
+            }
+        } catch (err) {
+            console.error('Signup error:', err);
+            setError('Failed to connect to server. Please try again.');
+            setIsLoading(false);
+        }
     };
 
     return (
@@ -445,6 +476,21 @@ export default function AnimatedSignupPage() {
                         </div>
 
                         <div className={styles.formGroup}>
+                            <Label htmlFor="kaggleUsername">Kaggle Username</Label>
+                            <Input
+                                id="kaggleUsername"
+                                type="text"
+                                placeholder="kaggle_wizard"
+                                value={kaggleUsername}
+                                autoComplete="off"
+                                onChange={(e) => setKaggleUsername(e.target.value)}
+                                onFocus={() => setIsTyping(true)}
+                                onBlur={() => setIsTyping(false)}
+                                required
+                            />
+                        </div>
+
+                        <div className={styles.formGroup}>
                             <Label htmlFor="password">Password</Label>
                             <div className={styles.passwordWrapper}>
                                 <Input
@@ -486,12 +532,7 @@ export default function AnimatedSignupPage() {
                             </div>
                         </div>
 
-                        <div className={styles.formOptions}>
-                            <div className={styles.remember}>
-                                <Checkbox id="terms" />
-                                <Label htmlFor="terms">I agree to the Terms and Conditions</Label>
-                            </div>
-                        </div>
+
 
                         {error && (
                             <div className={styles.errorMessage}>
@@ -504,12 +545,7 @@ export default function AnimatedSignupPage() {
                         </Button>
                     </form>
 
-                    <div className={styles.socialLogin}>
-                        <Button variant="outline" size="lg" type="button" style={{ width: '100%' }}>
-                            <span>✉️</span>
-                            Sign up with Google
-                        </Button>
-                    </div>
+
 
                     <div className={styles.signupLink}>
                         Already have an account?{' '}

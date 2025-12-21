@@ -5,7 +5,7 @@ import { useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
 import { Label } from '@/components/ui/Label';
-import { Checkbox } from '@/components/ui/Checkbox';
+
 import styles from './animated-login.module.css';
 
 interface PupilProps {
@@ -251,33 +251,43 @@ export default function AnimatedLoginPage() {
         setError('');
         setIsLoading(true);
 
-        await new Promise(resolve => setTimeout(resolve, 300));
+        try {
+            const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000/api';
+            const response = await fetch(`${API_BASE_URL}/auth/login`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    email,
+                    password
+                }),
+            });
 
-        if (email === 'demo@mlbattle.com' && password === 'demo123') {
-            console.log('✅ Login successful!');
-            // Store demo auth state
-            localStorage.setItem('mlbattle_user', JSON.stringify({
-                email: 'demo@mlbattle.com',
-                name: 'Demo User',
-                rating: 1850,
-                rank: 42
-            }));
-            
-            // Redirect to home page
-            router.push('/');
-        } else {
-            setError('Invalid email or password. Try the demo account!');
-            console.log('❌ Login failed');
+            const data = await response.json();
+
+            if (data.success) {
+                console.log('✅ Login successful!');
+                // Store auth token and user data
+                localStorage.setItem('token', data.data.token);
+                localStorage.setItem('user', JSON.stringify(data.data.user));
+
+                // Redirect to home page
+                router.push('/');
+            } else {
+                setError(data.message || 'Invalid email or password.');
+                console.log('❌ Login failed');
+                setIsLoading(false);
+            }
+        } catch (err) {
+            console.error('Login error:', err);
+            setError('Failed to connect to server. Please try again.');
             setIsLoading(false);
         }
         setIsLoading(false);
     };
 
-    const fillDemoCredentials = () => {
-        setEmail('demo@mlbattle.com');
-        setPassword('demo123');
-        setError('');
-    };
+
 
     return (
         <div className={styles.loginPage}>
@@ -454,13 +464,8 @@ export default function AnimatedLoginPage() {
                         </div>
 
                         <div className={styles.formOptions}>
-                            <div className={styles.remember}>
-                                <Checkbox id="remember" />
-                                <Label htmlFor="remember">Remember for 30 days</Label>
-                            </div>
-                            <a href="#" className={styles.forgotLink}>
-                                Forgot password?
-                            </a>
+
+
                         </div>
 
                         {error && (
@@ -474,31 +479,7 @@ export default function AnimatedLoginPage() {
                         </Button>
                     </form>
 
-                    <div className={styles.demoSection}>
-                        <p className={styles.demoText}>Want to try it out?</p>
-                        <button
-                            type="button"
-                            onClick={fillDemoCredentials}
-                            className={styles.demoBtn}
-                        >
-                            🎮 Use Demo Account
-                        </button>
-                        <div className={styles.demoCredentials}>
-                            <code>demo@mlbattle.com</code>
-                            <code>demo123</code>
-                        </div>
-                    </div>
 
-                    <div className={styles.divider}>
-                        <span>or</span>
-                    </div>
-
-                    <div className={styles.socialLogin}>
-                        <Button variant="outline" size="lg" type="button" style={{ width: '100%' }}>
-                            <span>✉️</span>
-                            Log in with Google
-                        </Button>
-                    </div>
 
                     <div className={styles.signupLink}>
                         Don&apos;t have an account?{' '}
