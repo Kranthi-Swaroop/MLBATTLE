@@ -21,10 +21,15 @@ const { startLeaderboardSync } = require('./jobs/leaderboardSync');
 const app = express();
 const server = http.createServer(app);
 
+// CORS configuration
+const corsOrigins = process.env.CORS_ORIGIN 
+    ? process.env.CORS_ORIGIN.split(',').map(s => s.trim())
+    : ['http://localhost:3000'];
+
 // Socket.io setup with CORS
 const io = new Server(server, {
     cors: {
-        origin: process.env.FRONTEND_URL || 'http://localhost:3000',
+        origin: corsOrigins,
         methods: ['GET', 'POST']
     }
 });
@@ -37,7 +42,10 @@ connectDB();
 
 // Middleware
 app.use(helmet());
-app.use(cors());
+app.use(cors({
+    origin: corsOrigins,
+    credentials: true
+}));
 app.use(express.json());
 
 // Routes

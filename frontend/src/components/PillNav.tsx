@@ -38,6 +38,7 @@ const PillNav: React.FC<PillNavProps> = ({
     pillTextColor = '#CBD5E1',
 }) => {
     const pathname = usePathname();
+    const router = useRouter();
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
     const circleRefs = useRef<Array<HTMLSpanElement | null>>([]);
     const tlRefs = useRef<Array<gsap.core.Timeline | null>>([]);

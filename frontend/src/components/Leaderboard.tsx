@@ -105,7 +105,6 @@ export default function Leaderboard() {
                                                             {rank === 1 && <span className={styles.crown}>👑 </span>}
                                                             {user.name}
                                                         </div>
-                                                        <div className={styles.tableUserHandle}>@{user.kaggleUsername}</div>
                                                     </div>
                                                 </div>
                                             </td>
