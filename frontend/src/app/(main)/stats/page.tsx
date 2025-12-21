@@ -16,7 +16,7 @@ export default function AboutPage() {
                     sensitivity={0.55}
                     lineThickness={1}
                     linesColor="#392e4e"
-                    gridScale={0.1}
+                    gridScale={0.12}
                     scanColor="#FF9FFC"
                     scanOpacity={0.4}
                     noiseIntensity={0.01}
@@ -27,29 +27,49 @@ export default function AboutPage() {
                 <section className={styles.hero}>
                     <h1 className={styles.title}>About MLBattle</h1>
                     <p className={styles.subtitle}>
-                        Where Machine Learning Enthusiasts Compete, Learn, and Grow
+                        Where Machine Learning Enthusiasts Compete, Learn, and Grow Together
                     </p>
                 </section>
+
+                {/* Stats Banner */}
+                <div className={styles.statsBanner}>
+                    <div className={styles.statItem}>
+                        <div className={styles.statNumber}>500+</div>
+                        <div className={styles.statLabel}>Active Users</div>
+                    </div>
+                    <div className={styles.statItem}>
+                        <div className={styles.statNumber}>50+</div>
+                        <div className={styles.statLabel}>Competitions</div>
+                    </div>
+                    <div className={styles.statItem}>
+                        <div className={styles.statNumber}>1000+</div>
+                        <div className={styles.statLabel}>Submissions</div>
+                    </div>
+                    <div className={styles.statItem}>
+                        <div className={styles.statNumber}>100+</div>
+                        <div className={styles.statLabel}>Teams</div>
+                    </div>
+                </div>
 
                 {/* About the Platform */}
                 <section className={styles.section}>
                     <div className={styles.sectionHeader}>
-                        <div className={styles.iconWrapper}>
-                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                                <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
-                                <circle cx="8.5" cy="8.5" r="1.5"></circle>
-                                <polyline points="21 15 16 10 5 21"></polyline>
-                            </svg>
-                        </div>
-                        <h2>What is MLBattle?</h2>
+                        <h2>
+                            <div className={styles.iconWrapper}>
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                                    <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"></path>
+                                </svg>
+                            </div>
+                            What is MLBattle?
+                        </h2>
                     </div>
                     <p className={styles.text}>
                         MLBattle is a competitive machine learning platform designed to bring together students, researchers, 
                         and ML enthusiasts in exciting data science competitions. Our platform provides a space where you can 
-                        test your skills, learn from others, and push the boundaries of what's possible with machine learning.
+                        test your skills, learn from others, and push the boundaries of what&apos;s possible with machine learning.
                     </p>
                     <p className={styles.text}>
-                        Whether you're a beginner taking your first steps in ML or an experienced practitioner looking for 
+                        Whether you&apos;re a beginner taking your first steps in ML or an experienced practitioner looking for 
                         challenging problems, MLBattle offers competitions tailored to all skill levels. Compete individually 
                         or form teams, climb the leaderboard, and earn recognition for your achievements.
                     </p>
@@ -58,15 +78,17 @@ export default function AboutPage() {
                 {/* About KALI Club */}
                 <section className={styles.section}>
                     <div className={styles.sectionHeader}>
-                        <div className={styles.iconWrapper}>
-                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                                <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
-                                <circle cx="9" cy="7" r="4"></circle>
-                                <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
-                                <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
-                            </svg>
-                        </div>
-                        <h2>KALI Club</h2>
+                        <h2>
+                            <div className={styles.iconWrapper}>
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                                    <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                                    <circle cx="9" cy="7" r="4"></circle>
+                                    <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
+                                    <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+                                </svg>
+                            </div>
+                            KALI Club
+                        </h2>
                         <h3 className={styles.subtitle}>Knowledge in Artificial and Learning Intelligence</h3>
                     </div>
                     <p className={styles.text}>
@@ -89,12 +111,12 @@ export default function AboutPage() {
                         <div className={styles.featureCard}>
                             <div className={styles.featureIcon}>🤝</div>
                             <h4>Network</h4>
-                            <p>Connect with fellow AI/ML enthusiasts and experts</p>
+                            <p>Connect with fellow AI/ML enthusiasts</p>
                         </div>
                         <div className={styles.featureCard}>
                             <div className={styles.featureIcon}>🏆</div>
                             <h4>Compete</h4>
-                            <p>Test your skills in exciting ML competitions</p>
+                            <p>Test your skills in ML competitions</p>
                         </div>
                     </div>
                 </section>
@@ -102,13 +124,15 @@ export default function AboutPage() {
                 {/* How It Works */}
                 <section className={styles.section}>
                     <div className={styles.sectionHeader}>
-                        <div className={styles.iconWrapper}>
-                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                                <circle cx="12" cy="12" r="10"></circle>
-                                <polyline points="12 6 12 12 16 14"></polyline>
-                            </svg>
-                        </div>
-                        <h2>How MLBattle Works</h2>
+                        <h2>
+                            <div className={styles.iconWrapper}>
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                                    <circle cx="12" cy="12" r="10"></circle>
+                                    <polyline points="12 6 12 12 16 14"></polyline>
+                                </svg>
+                            </div>
+                            How MLBattle Works
+                        </h2>
                     </div>
                     
                     <div className={styles.stepsContainer}>
@@ -116,7 +140,7 @@ export default function AboutPage() {
                             <div className={styles.stepNumber}>1</div>
                             <div className={styles.stepContent}>
                                 <h3>Create an Account</h3>
-                                <p>Sign up and join the MLBattle community. Set up your profile and start exploring.</p>
+                                <p>Sign up and join the MLBattle community. Set up your profile and start exploring competitions.</p>
                             </div>
                         </div>
 
@@ -124,7 +148,7 @@ export default function AboutPage() {
                             <div className={styles.stepNumber}>2</div>
                             <div className={styles.stepContent}>
                                 <h3>Browse Events & Competitions</h3>
-                                <p>Discover ongoing and upcoming competitions. Each event comes with detailed problem statements, datasets, and evaluation metrics.</p>
+                                <p>Discover ongoing and upcoming competitions with detailed problem statements, datasets, and metrics.</p>
                             </div>
                         </div>
 
@@ -132,7 +156,7 @@ export default function AboutPage() {
                             <div className={styles.stepNumber}>3</div>
                             <div className={styles.stepContent}>
                                 <h3>Register & Compete</h3>
-                                <p>Register for competitions that interest you. Download datasets, build your models, and submit your predictions.</p>
+                                <p>Register for competitions that interest you. Download datasets, build your models, and submit predictions.</p>
                             </div>
                         </div>
 
@@ -140,7 +164,7 @@ export default function AboutPage() {
                             <div className={styles.stepNumber}>4</div>
                             <div className={styles.stepContent}>
                                 <h3>Track Your Progress</h3>
-                                <p>Submit your solutions and see how you rank on the leaderboard. Your submissions are evaluated in real-time using Kaggle integration.</p>
+                                <p>Submit solutions and see your real-time ranking on the leaderboard with Kaggle-powered evaluation.</p>
                             </div>
                         </div>
 
@@ -148,7 +172,7 @@ export default function AboutPage() {
                             <div className={styles.stepNumber}>5</div>
                             <div className={styles.stepContent}>
                                 <h3>Learn & Improve</h3>
-                                <p>Participate in discussions, learn from top performers, and continuously improve your skills. Build your ELO rating and reputation.</p>
+                                <p>Participate in discussions, learn from top performers, and build your ELO rating and reputation.</p>
                             </div>
                         </div>
                     </div>
@@ -166,7 +190,7 @@ export default function AboutPage() {
                         <div>
                             <h3>Powered by Kaggle Integration</h3>
                             <p>
-                                MLBattle leverages Kaggle's robust API for competition hosting and evaluation. 
+                                MLBattle leverages Kaggle&apos;s robust API for competition hosting and evaluation. 
                                 This integration ensures reliable scoring, fair competition, and access to industry-standard 
                                 ML competition infrastructure.
                             </p>
@@ -175,17 +199,19 @@ export default function AboutPage() {
                 </section>
 
                 {/* Team Section */}
-                <section className={styles.section}>
+                <section className={`${styles.section} ${styles.teamSection}`}>
                     <div className={styles.sectionHeader}>
-                        <div className={styles.iconWrapper}>
-                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                                <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
-                                <circle cx="9" cy="7" r="4"></circle>
-                                <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
-                                <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
-                            </svg>
-                        </div>
-                        <h2>Meet the Team</h2>
+                        <h2>
+                            <div className={styles.iconWrapper}>
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                                    <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                                    <circle cx="9" cy="7" r="4"></circle>
+                                    <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
+                                    <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+                                </svg>
+                            </div>
+                            Meet the Team
+                        </h2>
                     </div>
                     <div className={styles.teamGrid}>
                         <ProfileCard
@@ -202,13 +228,21 @@ export default function AboutPage() {
                             name="B. Kranthi Swaroop"
                             role="Server & API Development"
                             description="B.Tech CSE'28 NIT Raipur"
-                            image="/Ai_profile1.jpg"
-                            githubUrl="https://github.com"
+                            image="/profile2.jpg"
+                            githubUrl="https://github.com/Kranthi-Swaroop"
                             twitterUrl="https://x.com/e_boyadi"
                             instagramUrl="https://instagram.com"
                             email="backend@mlbattle.com"
                         />
                     </div>
+                </section>
+
+                {/* CTA Section */}
+                <section className={styles.ctaSection}>
+                    <h2 className={styles.ctaTitle}>Ready to Start Competing?</h2>
+                    <p className={styles.ctaText}>
+                        Join MLBattle today and be part of the next generation of ML practitioners.
+                    </p>
                 </section>
             </div>
         </div>
