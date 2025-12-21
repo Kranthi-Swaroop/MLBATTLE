@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import { useParams } from 'next/navigation';
 import Link from 'next/link';
 import dynamic from 'next/dynamic';
+import api, { UserProfile } from '@/lib/api';
 import styles from './eventDetail.module.css';
 
 const FloatingLines = dynamic(() => import('@/components/FloatingLines'), { ssr: false });
@@ -62,43 +63,218 @@ export default function EventDetailPage() {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
     const [activeTab, setActiveTab] = useState('competitions');
+    const [isAdmin, setIsAdmin] = useState(false);
+    const [userProfile, setUserProfile] = useState<UserProfile | null>(null);
+    const [userRegistrations, setUserRegistrations] = useState<Record<string, any>>({});
+    const [hasMounted, setHasMounted] = useState(false);
+    const [isManageModalOpen, setIsManageModalOpen] = useState(false);
+    const [isSubmitting, setIsSubmitting] = useState(false);
+
+    // Form state for new competition
+    const [formData, setFormData] = useState({
+        kaggleSlugOrUrl: '',
+        title: '',
+        description: '',
+        higherIsBetter: true,
+        metricMinValue: 0,
+        metricMaxValue: 1,
+        pointsForPerfectScore: 100,
+        ratingWeight: 1,
+        isImport: true
+    });
 
     useEffect(() => {
+        setHasMounted(true);
         if (eventId) {
-            fetchEvent();
+            const init = async () => {
+                const profile = await fetchUserData();
+                await fetchEvent(profile); // Pass profile to avoid closure issues
+            };
+            init();
         }
     }, [eventId]);
 
-    const fetchEvent = async () => {
+    const fetchUserData = async (): Promise<UserProfile | null> => {
+        const response = await api.getUserProfile();
+        if (response.success && response.data) {
+            setUserProfile(response.data);
+            setIsAdmin(response.data.role === 'admin');
+            return response.data;
+        }
+        return null;
+    };
+
+    const fetchEvent = async (profile?: UserProfile | null) => {
         try {
             setLoading(true);
-            const response = await fetch(`${API_BASE_URL}/events/${eventId}`);
-            const data = await response.json();
+            const response = await api.getEvent(eventId);
 
-            if (data.success) {
+            if (response.success && response.data) {
+                const eventData = response.data as Event;
                 // Fetch full competition details with leaderboards
-                const eventData = data.data;
                 const competitionsWithDetails = await Promise.all(
                     eventData.competitions.map(async (comp: Competition) => {
                         try {
-                            const compResponse = await fetch(`${API_BASE_URL}/competitions/${comp._id}`);
-                            const compData = await compResponse.json();
-                            return compData.success ? compData.data : comp;
+                            const compResponse = await api.getCompetition(comp._id);
+                            return compResponse.success ? compResponse.data : comp;
                         } catch {
                             return comp;
                         }
                     })
                 );
-                eventData.competitions = competitionsWithDetails;
+                eventData.competitions = competitionsWithDetails as Competition[];
                 setEvent(eventData);
+
+                // Fetch registrations for each competition
+                const registrationsMap: Record<string, any> = {};
+                const currentUser = profile || userProfile;
+
+                if (currentUser) {
+                    await Promise.all(
+                        eventData.competitions.map(async (comp: Competition) => {
+                            const regRes = await api.getRegistrations(comp._id);
+                            if (regRes.success && regRes.data) {
+                                // Find current user's registration
+                                const myReg = (regRes.data as any[]).find(r =>
+                                    (r.type === 'solo' && r.user?._id === currentUser._id) ||
+                                    (r.type === 'team' && r.team?.members?.some((m: any) => (m._id || m) === currentUser._id))
+                                );
+                                if (myReg) {
+                                    registrationsMap[comp._id] = myReg;
+                                }
+                            }
+                        })
+                    );
+                    setUserRegistrations(registrationsMap);
+                }
             } else {
-                setError(data.message || 'Event not found');
+                setError(response.message || 'Event not found');
             }
         } catch (err) {
             setError('Failed to connect to server');
             console.error('Error fetching event:', err);
         } finally {
             setLoading(false);
+        }
+    };
+
+    const handleCompetitionAction = async (e: React.FormEvent) => {
+        e.preventDefault();
+        setIsSubmitting(true);
+        try {
+            let response;
+            if (formData.isImport) {
+                response = await api.importCompetition({
+                    url: formData.kaggleSlugOrUrl,
+                    eventId: eventId,
+                    higherIsBetter: formData.higherIsBetter,
+                    metricMinValue: formData.metricMinValue,
+                    metricMaxValue: formData.metricMaxValue,
+                    pointsForPerfectScore: formData.pointsForPerfectScore,
+                    ratingWeight: formData.ratingWeight
+                });
+            } else {
+                response = await api.createCompetition({
+                    kaggleSlug: formData.kaggleSlugOrUrl,
+                    title: formData.title,
+                    description: formData.description,
+                    eventId: eventId,
+                    higherIsBetter: formData.higherIsBetter,
+                    metricMinValue: formData.metricMinValue,
+                    metricMaxValue: formData.metricMaxValue,
+                    pointsForPerfectScore: formData.pointsForPerfectScore,
+                    ratingWeight: formData.ratingWeight
+                });
+            }
+
+            if (response.success) {
+                setFormData({
+                    kaggleSlugOrUrl: '',
+                    title: '',
+                    description: '',
+                    higherIsBetter: true,
+                    metricMinValue: 0,
+                    metricMaxValue: 1,
+                    pointsForPerfectScore: 100,
+                    ratingWeight: 1,
+                    isImport: true
+                });
+                fetchEvent();
+            } else {
+                alert(response.message || 'Action failed');
+            }
+        } catch (error) {
+            console.error('Competition action error:', error);
+            alert('An error occurred');
+        } finally {
+            setIsSubmitting(false);
+        }
+    };
+
+    const handleDeleteCompetition = async (id: string, title: string) => {
+        if (!window.confirm(`Are you sure you want to remove "${title}" from this event?`)) return;
+
+        try {
+            const response = await api.deleteCompetition(id);
+            if (response.success) {
+                fetchEvent();
+            } else {
+                alert(response.message || 'Delete failed');
+            }
+        } catch (error) {
+            console.error('Delete error:', error);
+            alert('An error occurred');
+        }
+    };
+
+    const handleRegisterCompetition = async (id: string, title: string) => {
+        if (!userProfile) {
+            alert('Please log in to register for competitions.');
+            return;
+        }
+
+        if (userRegistrations[id]) {
+            alert('You are already registered for this competition.');
+            return;
+        }
+
+        if (!window.confirm(`Do you want to register for "${title}"?`)) return;
+
+        setIsSubmitting(true);
+        try {
+            // Default to solo registration
+            const response = await api.registerForCompetition(id, 'solo');
+            if (response.success) {
+                alert(`Successfully registered! Good luck with ${title}.`);
+                fetchEvent(); // Refresh event and registrations
+            } else {
+                alert(response.message || 'Registration failed');
+            }
+        } catch (error) {
+            console.error('Registration error:', error);
+            alert('An error occurred');
+        } finally {
+            setIsSubmitting(false);
+        }
+    };
+
+    const handleFinalizeCompetition = async (id: string, title: string) => {
+        if (!window.confirm(`Are you sure you want to finalize "${title}"? This will process results and update ELO ratings for all participants. This should only be done once per competition.`)) return;
+
+        setIsSubmitting(true);
+        try {
+            const response = await api.finalizeCompetition(id);
+            if (response.success) {
+                alert('Success! ELO ratings have been updated for all matched participants.');
+                fetchEvent();
+            } else {
+                alert(response.message || 'Finalization failed');
+            }
+        } catch (error) {
+            console.error('Finalize error:', error);
+            alert('An error occurred');
+        } finally {
+            setIsSubmitting(false);
         }
     };
 
@@ -177,7 +353,7 @@ export default function EventDetailPage() {
         <div className={styles.eventPage}>
             <div className={styles.heroBanner}>
                 <div className={styles.floatingLinesWrapper}>
-                    <FloatingLines 
+                    <FloatingLines
                         enabledWaves={['top', 'middle', 'bottom']}
                         lineCount={[10, 15, 20]}
                         lineDistance={[8, 6, 4]}
@@ -218,6 +394,17 @@ export default function EventDetailPage() {
                                     <span className={styles.metaLabel}>Ends</span>
                                 </div>
                             </div>
+
+                            {isAdmin && (
+                                <div className={styles.manageActions}>
+                                    <button
+                                        className={styles.manageButton}
+                                        onClick={() => setIsManageModalOpen(true)}
+                                    >
+                                        ⚙️ Manage Competitions
+                                    </button>
+                                </div>
+                            )}
                         </div>
                     </div>
                 </div>
@@ -259,6 +446,9 @@ export default function EventDetailPage() {
                                     key={comp._id}
                                     competition={comp}
                                     eventStatus={status}
+                                    isRegistered={!!userRegistrations[comp._id]}
+                                    onRegister={() => handleRegisterCompetition(comp._id, comp.title)}
+                                    isSubmitting={isSubmitting}
                                 />
                             ))}
                         </div>
@@ -323,6 +513,177 @@ export default function EventDetailPage() {
                         ))}
                     </div>
                 )}
+
+                {/* Management Modal */}
+                {isManageModalOpen && (
+                    <div className={styles.modalOverlay}>
+                        <div className={styles.modalContent}>
+                            <h2>Manage {event.name} Competitions</h2>
+
+                            <div className={styles.competitionList}>
+                                {event.competitions.map(comp => (
+                                    <div key={comp._id} className={styles.competitionListItem}>
+                                        <div className={styles.compItemInfo}>
+                                            <h4>{comp.title}</h4>
+                                            <p>{comp.kaggleSlug}</p>
+                                        </div>
+                                        <div style={{ display: 'flex', gap: '0.5rem' }}>
+                                            <button
+                                                className={styles.manageButton}
+                                                style={{ padding: '0.4rem 0.8rem', fontSize: '0.7rem' }}
+                                                onClick={() => handleFinalizeCompetition(comp._id, comp.title)}
+                                                disabled={isSubmitting}
+                                            >
+                                                🏆 Finalize
+                                            </button>
+                                            <button
+                                                className={styles.itemDeleteBtn}
+                                                onClick={() => handleDeleteCompetition(comp._id, comp.title)}
+                                                title="Remove Competition"
+                                                disabled={isSubmitting}
+                                            >
+                                                🗑️
+                                            </button>
+                                        </div>
+                                    </div>
+                                ))}
+                                {event.competitions.length === 0 && <p>No competitions added yet.</p>}
+                            </div>
+
+                            <div className={styles.infoBox}>
+                                Add a Kaggle competition to this event. Scoring will be normalized based on your parameters.
+                            </div>
+
+                            <form onSubmit={handleCompetitionAction}>
+                                <div className={styles.formGroup}>
+                                    <label>Action Type</label>
+                                    <div className={styles.radioGroup}>
+                                        <label className={styles.radioLabel}>
+                                            <input
+                                                type="radio"
+                                                checked={formData.isImport}
+                                                onChange={() => setFormData({ ...formData, isImport: true })}
+                                            />
+                                            Import from Kaggle
+                                        </label>
+                                        <label className={styles.radioLabel}>
+                                            <input
+                                                type="radio"
+                                                checked={!formData.isImport}
+                                                onChange={() => setFormData({ ...formData, isImport: false })}
+                                            />
+                                            Add Manual (Slug only)
+                                        </label>
+                                    </div>
+                                </div>
+
+                                <div className={styles.formGroup}>
+                                    <label>{formData.isImport ? 'Kaggle Competition URL/Slug' : 'Kaggle Competition Slug'}</label>
+                                    <input
+                                        type="text"
+                                        required
+                                        value={formData.kaggleSlugOrUrl}
+                                        onChange={e => setFormData({ ...formData, kaggleSlugOrUrl: e.target.value })}
+                                        placeholder={formData.isImport ? "https://www.kaggle.com/competitions/..." : "titanic"}
+                                    />
+                                </div>
+
+                                {!formData.isImport && (
+                                    <>
+                                        <div className={styles.formRow}>
+                                            <div className={styles.formGroup}>
+                                                <label>Custom Title</label>
+                                                <input
+                                                    type="text"
+                                                    required
+                                                    value={formData.title}
+                                                    onChange={e => setFormData({ ...formData, title: e.target.value })}
+                                                />
+                                            </div>
+                                            <div className={styles.formGroup}>
+                                                <label>Description</label>
+                                                <input
+                                                    type="text"
+                                                    value={formData.description}
+                                                    onChange={e => setFormData({ ...formData, description: e.target.value })}
+                                                />
+                                            </div>
+                                        </div>
+                                    </>
+                                )}
+
+                                <div className={styles.formRow}>
+                                    <div className={styles.formGroup}>
+                                        <label>Scoring Metric Type</label>
+                                        <select
+                                            value={formData.higherIsBetter ? 'higher' : 'lower'}
+                                            onChange={e => setFormData({ ...formData, higherIsBetter: e.target.value === 'higher' })}
+                                        >
+                                            <option value="higher">Higher Score is Better (e.g. Accuracy)</option>
+                                            <option value="lower">Lower Score is Better (e.g. LogLoss)</option>
+                                        </select>
+                                    </div>
+                                    <div className={styles.formGroup}>
+                                        <label>Weight (ELO Multiplier)</label>
+                                        <input
+                                            type="number"
+                                            step="0.1"
+                                            value={formData.ratingWeight}
+                                            onChange={e => setFormData({ ...formData, ratingWeight: parseFloat(e.target.value) })}
+                                        />
+                                    </div>
+                                </div>
+
+                                <div className={styles.formRow}>
+                                    <div className={styles.formGroup}>
+                                        <label>Metric Min Value</label>
+                                        <input
+                                            type="number"
+                                            step="0.0001"
+                                            value={formData.metricMinValue}
+                                            onChange={e => setFormData({ ...formData, metricMinValue: parseFloat(e.target.value) })}
+                                        />
+                                    </div>
+                                    <div className={styles.formGroup}>
+                                        <label>Metric Max Value</label>
+                                        <input
+                                            type="number"
+                                            step="0.0001"
+                                            value={formData.metricMaxValue}
+                                            onChange={e => setFormData({ ...formData, metricMaxValue: parseFloat(e.target.value) })}
+                                        />
+                                    </div>
+                                </div>
+
+                                <div className={styles.formGroup}>
+                                    <label>Perfect Score Points (Normalized Max)</label>
+                                    <input
+                                        type="number"
+                                        value={formData.pointsForPerfectScore}
+                                        onChange={e => setFormData({ ...formData, pointsForPerfectScore: parseFloat(e.target.value) })}
+                                    />
+                                </div>
+
+                                <div className={styles.modalActions}>
+                                    <button
+                                        type="button"
+                                        className="btn btn-secondary"
+                                        onClick={() => setIsManageModalOpen(false)}
+                                    >
+                                        Cancel
+                                    </button>
+                                    <button
+                                        type="submit"
+                                        className="btn btn-primary"
+                                        disabled={isSubmitting}
+                                    >
+                                        {isSubmitting ? 'Saving...' : formData.isImport ? 'Import & Add' : 'Add Competition'}
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                )}
             </div>
         </div>
     );
@@ -331,9 +692,12 @@ export default function EventDetailPage() {
 interface CompetitionCardProps {
     competition: Competition;
     eventStatus: 'live' | 'upcoming' | 'ended';
+    isRegistered: boolean;
+    onRegister: () => void;
+    isSubmitting: boolean;
 }
 
-function CompetitionCard({ competition, eventStatus }: CompetitionCardProps) {
+function CompetitionCard({ competition, eventStatus, isRegistered, onRegister, isSubmitting }: CompetitionCardProps) {
     const leaderboardCount = competition.leaderboard?.length || 0;
 
     return (
@@ -346,6 +710,11 @@ function CompetitionCard({ competition, eventStatus }: CompetitionCardProps) {
                 </div>
                 <div className={styles.brutalistCardAlert}>{competition.title}</div>
             </div>
+            {isRegistered && (
+                <div className={styles.registrationBadge}>
+                    <span>✓ REGISTERED</span>
+                </div>
+            )}
             <div className={styles.brutalistCardMessage}>
                 {competition.description || 'Kaggle competition integrated with this event.'}
                 <div className={styles.brutalistCardStats}>
@@ -367,10 +736,11 @@ function CompetitionCard({ competition, eventStatus }: CompetitionCardProps) {
                     View on Kaggle
                 </a>
                 <button
-                    className={`${styles.brutalistCardButton} ${styles.brutalistCardButtonRead}`}
-                    disabled={eventStatus === 'ended'}
+                    className={`${styles.brutalistCardButton} ${styles.brutalistCardButtonRead} ${isRegistered ? styles.btnRegistered : ''}`}
+                    onClick={onRegister}
+                    disabled={eventStatus === 'ended' || isRegistered || isSubmitting}
                 >
-                    {eventStatus === 'ended' ? 'Ended' : eventStatus === 'upcoming' ? 'Coming Soon' : 'Register'}
+                    {isRegistered ? 'Registered' : eventStatus === 'ended' ? 'Ended' : eventStatus === 'upcoming' ? 'Coming Soon' : 'Register'}
                 </button>
             </div>
         </div>

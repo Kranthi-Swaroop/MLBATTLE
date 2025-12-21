@@ -47,6 +47,7 @@
     0% {
         background-position: 0 0, 0 0;
     }
+
     100% {
         background-position: 60px 60px, 60px 60px;
     }
@@ -106,6 +107,7 @@
         opacity: 0;
         transform: translateY(40px) rotateX(10deg);
     }
+
     to {
         opacity: 1;
         transform: translateY(0) rotateX(0);
@@ -396,6 +398,7 @@
         opacity: 0;
         transform: translateY(20px);
     }
+
     to {
         opacity: 1;
         transform: translateY(0);
@@ -737,12 +740,10 @@
     left: -100%;
     width: 100%;
     height: 100%;
-    background: linear-gradient(
-        120deg,
-        transparent,
-        rgba(139, 92, 246, 0.3),
-        transparent
-    );
+    background: linear-gradient(120deg,
+            transparent,
+            rgba(139, 92, 246, 0.3),
+            transparent);
     transition: all 0.6s;
 }
 
@@ -900,9 +901,12 @@
 }
 
 @keyframes goldGlow {
-    0%, 100% {
+
+    0%,
+    100% {
         box-shadow: 4px 4px 0 #FFA500;
     }
+
     50% {
         box-shadow: 5px 5px 0 #FFA500;
     }
@@ -1062,4 +1066,254 @@
     .competitionsSection h2::before {
         font-size: 1.25rem;
     }
+}
+
+/* Management Modal Styles */
+.modalOverlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.85);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 9999;
+    backdrop-filter: blur(8px);
+    animation: fadeIn 0.3s ease;
+}
+
+.modalContent {
+    background: var(--bg-secondary);
+    width: 90%;
+    max-width: 650px;
+    max-height: 90vh;
+    padding: 2.5rem;
+    position: relative;
+    border: 4px solid var(--primary-500);
+    box-shadow: 15px 15px 0 var(--primary-600);
+    overflow-y: auto;
+    animation: slideUp 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.modalContent h2 {
+    font-size: 2rem;
+    margin-bottom: 2rem;
+    color: var(--text-primary);
+    text-transform: uppercase;
+    font-weight: 900;
+    letter-spacing: 1px;
+    border-bottom: 3px solid var(--primary-500);
+    padding-bottom: 0.5rem;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+.modalContent h2::before {
+    content: '⚙️';
+}
+
+.modalActions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 1.5rem;
+    margin-top: 2.5rem;
+}
+
+/* Manage Actions in Hero */
+.manageActions {
+    margin-top: 1.5rem;
+    display: flex;
+    gap: 1rem;
+}
+
+.manageButton {
+    background: rgba(239, 68, 68, 0.1);
+    border: 3px solid #EF4444;
+    color: #EF4444;
+    padding: 0.8rem 1.5rem;
+    font-weight: 900;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    box-shadow: 5px 5px 0 #DC2626;
+}
+
+.manageButton:hover {
+    background: #EF4444;
+    color: white;
+    transform: translate(-2px, -2px);
+    box-shadow: 7px 7px 0 #DC2626;
+}
+
+/* Form Styles */
+.formGroup {
+    margin-bottom: 1.5rem;
+}
+
+.formGroup label {
+    display: block;
+    margin-bottom: 0.5rem;
+    font-weight: 900;
+    text-transform: uppercase;
+    font-size: 0.8rem;
+    color: var(--text-secondary);
+}
+
+.formGroup input,
+.formGroup textarea,
+.formGroup select {
+    width: 100%;
+    padding: 0.75rem 1rem;
+    background: var(--bg-primary);
+    border: 3px solid var(--border-medium);
+    color: var(--text-primary);
+    font-weight: 600;
+    transition: all 0.2s ease;
+}
+
+.formGroup input:focus,
+.formGroup textarea:focus {
+    outline: none;
+    border-color: var(--primary-500);
+    box-shadow: 4px 4px 0 var(--primary-600);
+}
+
+.formRow {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1.5rem;
+}
+
+.radioGroup {
+    display: flex;
+    gap: 2rem;
+    padding: 0.5rem 0;
+}
+
+.radioLabel {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    cursor: pointer;
+    font-weight: 700;
+}
+
+.radioLabel input {
+    width: 1.2rem;
+    height: 1.2rem;
+    accent-color: var(--primary-500);
+}
+
+/* Info Box */
+.infoBox {
+    background: rgba(139, 92, 246, 0.1);
+    border-left: 5px solid #8B5CF6;
+    padding: 1rem 1.5rem;
+    margin-bottom: 2rem;
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+    font-weight: 600;
+}
+
+/* Competition List in Manage Modal */
+.competitionList {
+    margin-bottom: 2.5rem;
+}
+
+.competitionListItem {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 1.25rem;
+    background: var(--bg-primary);
+    border: 3px solid var(--border-medium);
+    margin-bottom: 1rem;
+    transition: all 0.2s ease;
+}
+
+.competitionListItem:hover {
+    border-color: var(--primary-500);
+    box-shadow: 5px 5px 0 var(--primary-600);
+}
+
+.compItemInfo h4 {
+    margin: 0;
+    font-size: 1.1rem;
+    font-weight: 900;
+    text-transform: uppercase;
+}
+
+.compItemInfo p {
+    margin: 0.25rem 0 0;
+    font-size: 0.8rem;
+    color: var(--text-muted);
+    font-weight: 700;
+}
+
+.itemDeleteBtn {
+    background: transparent;
+    border: 2px solid #EF4444;
+    color: #EF4444;
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.itemDeleteBtn:hover {
+    background: #EF4444;
+    color: white;
+    transform: scale(1.1);
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+
+    to {
+        opacity: 1;
+    }
+}
+
+@keyframes slideUp {
+    from {
+        transform: translateY(30px);
+        opacity: 0;
+    }
+
+    to {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}
+
+.registrationBadge {
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+    background: var(--success);
+    color: white;
+    padding: 0.3rem 0.8rem;
+    font-size: 0.65rem;
+    font-weight: 900;
+    transform: rotate(5deg);
+    border: 2px solid black;
+    box-shadow: 3px 3px 0 black;
+    z-index: 5;
+}
+
+.btnRegistered {
+    background: var(--success) !important;
+    border-color: #059669 !important;
+    color: white !important;
+    cursor: default !important;
+    box-shadow: none !important;
+    transform: none !important;
 }
