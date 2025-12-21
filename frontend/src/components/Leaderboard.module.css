@@ -9,7 +9,7 @@
     -webkit-backdrop-filter: blur(30px) saturate(180%);
     border-radius: var(--radius-2xl);
     overflow: hidden;
-    box-shadow: 
+    box-shadow:
         0 20px 60px rgba(0, 0, 0, 0.3),
         0 0 40px rgba(139, 92, 246, 0.15),
         inset 0 1px 0 rgba(255, 255, 255, 0.15),
@@ -49,10 +49,10 @@
     left: 0;
     right: 0;
     height: 1px;
-    background: linear-gradient(90deg, 
-        transparent 0%, 
-        rgba(139, 92, 246, 0.5) 50%, 
-        transparent 100%);
+    background: linear-gradient(90deg,
+            transparent 0%,
+            rgba(139, 92, 246, 0.5) 50%,
+            transparent 100%);
 }
 
 .leaderboardTitle {
@@ -89,9 +89,12 @@
 }
 
 @keyframes glow {
-    0%, 100% {
+
+    0%,
+    100% {
         box-shadow: 0 0 20px rgba(239, 68, 68, 0.3);
     }
+
     50% {
         box-shadow: 0 0 30px rgba(239, 68, 68, 0.5);
     }
@@ -107,6 +110,7 @@
 }
 
 @keyframes pulse {
+
     0%,
     100% {
         opacity: 1;
@@ -221,9 +225,12 @@
 }
 
 @keyframes spin {
-    0%, 100% {
+
+    0%,
+    100% {
         transform: rotateY(0deg) scale(1);
     }
+
     50% {
         transform: rotateY(180deg) scale(1.1);
     }
@@ -236,9 +243,12 @@
 }
 
 @keyframes bounce {
-    0%, 100% {
+
+    0%,
+    100% {
         transform: translateY(0);
     }
+
     50% {
         transform: translateY(-4px);
     }
@@ -295,27 +305,36 @@
 }
 
 @keyframes goldGlow {
-    0%, 100% {
+
+    0%,
+    100% {
         box-shadow: 0 6px 24px rgba(251, 191, 36, 0.6), inset 0 1px 0 rgba(255, 255, 255, 0.3);
     }
+
     50% {
         box-shadow: 0 8px 32px rgba(251, 191, 36, 0.8), inset 0 1px 0 rgba(255, 255, 255, 0.4);
     }
 }
 
 @keyframes silverGlow {
-    0%, 100% {
+
+    0%,
+    100% {
         box-shadow: 0 6px 24px rgba(203, 213, 225, 0.6), inset 0 1px 0 rgba(255, 255, 255, 0.3);
     }
+
     50% {
         box-shadow: 0 8px 32px rgba(203, 213, 225, 0.8), inset 0 1px 0 rgba(255, 255, 255, 0.4);
     }
 }
 
 @keyframes bronzeGlow {
-    0%, 100% {
+
+    0%,
+    100% {
         box-shadow: 0 6px 24px rgba(251, 146, 60, 0.6), inset 0 1px 0 rgba(255, 255, 255, 0.3);
     }
+
     50% {
         box-shadow: 0 8px 32px rgba(251, 146, 60, 0.8), inset 0 1px 0 rgba(255, 255, 255, 0.4);
     }
@@ -458,4 +477,17 @@
     .leaderboardTable td:nth-child(5) {
         display: none;
     }
+}
+
+.loadingContainer,
+.noResults {
+    padding: 4rem 2rem;
+    text-align: center;
+    color: var(--text-muted);
+    font-size: 1.125rem;
+    font-weight: 500;
+}
+
+.noResults p {
+    margin-bottom: 0;
 }

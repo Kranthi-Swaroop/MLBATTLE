@@ -240,6 +240,11 @@ class ApiService {
             method: 'DELETE',
         });
     }
+
+    // Leaderboard endpoint
+    async getLeaderboard(): Promise<ApiResponse<UserProfile[]>> {
+        return this.request('/leaderboard');
+    }
 }
 
 export const api = new ApiService();
