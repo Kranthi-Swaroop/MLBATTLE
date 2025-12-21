@@ -3,7 +3,10 @@
 import { useState, useEffect } from 'react';
 import { useParams } from 'next/navigation';
 import Link from 'next/link';
+import dynamic from 'next/dynamic';
 import styles from './eventDetail.module.css';
+
+const FloatingLines = dynamic(() => import('@/components/FloatingLines'), { ssr: false });
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000/api';
 
@@ -146,7 +149,6 @@ export default function EventDetailPage() {
     }
 
     const status = getEventStatus();
-    const gradient = gradients[Math.abs(event._id.charCodeAt(0)) % gradients.length];
 
     const getStatusLabel = () => {
         switch (status) {
@@ -173,7 +175,19 @@ export default function EventDetailPage() {
 
     return (
         <div className={styles.eventPage}>
-            <div className={styles.heroBanner} style={{ background: gradient }}>
+            <div className={styles.heroBanner}>
+                <div className={styles.floatingLinesWrapper}>
+                    <FloatingLines 
+                        enabledWaves={['top', 'middle', 'bottom']}
+                        lineCount={[10, 15, 20]}
+                        lineDistance={[8, 6, 4]}
+                        bendRadius={5.0}
+                        bendStrength={-0.5}
+                        interactive={true}
+                        parallax={true}
+                        linesGradient={['#8B5CF6', '#EC4899', '#06B6D4', '#3B82F6', '#F59E0B', '#EF4444', '#10B981', '#14B8A6']}
+                    />
+                </div>
                 <div className={styles.heroOverlay}>
                     <div className="container">
                         <Link href="/events" className={styles.backLink}>← Back to Events</Link>
@@ -323,39 +337,37 @@ function CompetitionCard({ competition, eventStatus }: CompetitionCardProps) {
     const leaderboardCount = competition.leaderboard?.length || 0;
 
     return (
-        <div className={styles.compCard}>
-            <div className={styles.compHeader}>
-                <h3>{competition.title}</h3>
-                <span className={styles.kaggleSlug}>{competition.kaggleSlug}</span>
+        <div className={styles.brutalistCard}>
+            <div className={styles.brutalistCardHeader}>
+                <div className={styles.brutalistCardIcon}>
+                    <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z" />
+                    </svg>
+                </div>
+                <div className={styles.brutalistCardAlert}>{competition.title}</div>
             </div>
-            <p className={styles.compDescription}>
+            <div className={styles.brutalistCardMessage}>
                 {competition.description || 'Kaggle competition integrated with this event.'}
-            </p>
-
-            <div className={styles.compStats}>
-                <div className={styles.stat}>
-                    <span className={styles.statValue}>{leaderboardCount}</span>
-                    <span className={styles.statLabel}>Submissions</span>
-                </div>
-                <div className={styles.stat}>
-                    <span className={styles.statValue}>
-                        {competition.syncStatus === 'success' ? '✓' : '⏳'}
+                <div className={styles.brutalistCardStats}>
+                    <span className={styles.brutalistStat}>
+                        📊 {leaderboardCount} Submissions
                     </span>
-                    <span className={styles.statLabel}>Sync Status</span>
+                    <span className={styles.brutalistStat}>
+                        {competition.syncStatus === 'success' ? '✓ Synced' : '⏳ Pending'}
+                    </span>
                 </div>
             </div>
-
-            <div className={styles.compFooter}>
+            <div className={styles.brutalistCardActions}>
                 <a
                     href={competition.kaggleUrl}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="btn btn-secondary"
+                    className={`${styles.brutalistCardButton} ${styles.brutalistCardButtonMark}`}
                 >
-                    View on Kaggle →
+                    View on Kaggle
                 </a>
                 <button
-                    className={`btn ${eventStatus === 'ended' ? 'btn-secondary' : 'btn-primary'}`}
+                    className={`${styles.brutalistCardButton} ${styles.brutalistCardButtonRead}`}
                     disabled={eventStatus === 'ended'}
                 >
                     {eventStatus === 'ended' ? 'Ended' : eventStatus === 'upcoming' ? 'Coming Soon' : 'Register'}
