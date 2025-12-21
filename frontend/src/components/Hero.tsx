@@ -3,10 +3,18 @@
 import styles from './Hero.module.css';
 import dynamic from 'next/dynamic';
 import Link from 'next/link';
+import { useState, useEffect } from 'react';
+import { api } from '@/lib/api';
 
 const Hyperspeed = dynamic(() => import('./Hyperspeed.jsx'), { ssr: false });
 
 export default function Hero() {
+    const [isLoggedIn, setIsLoggedIn] = useState(false);
+
+    useEffect(() => {
+        setIsLoggedIn(!!api.getToken());
+    }, []);
+
     return (
         <section className={styles.hero}>
             <Hyperspeed />
@@ -18,8 +26,7 @@ export default function Hero() {
                     </div>
 
                     <h1>
-                        Compete. Learn.<br />
-                        <span className={styles.highlight}>Dominate ML.</span>
+                        Compete. Learn. <span className={styles.highlight}>Dominate ML.</span>
                     </h1>
 
                     <p className={styles.heroDescription}>
@@ -28,69 +35,73 @@ export default function Hero() {
                     </p>
 
                     <div className={styles.heroButtons}>
-                        <Link href="/signup" className="btn btn-primary btn-lg">Start Competing</Link>
+                        {!isLoggedIn && (
+                            <Link href="/signup" className="btn btn-primary btn-lg">Start Competing</Link>
+                        )}
                         <Link href="/events" className="btn btn-secondary btn-lg">View Events</Link>
                     </div>
 
-
-
-                    <div className={styles.heroStats}>
-                        <div className={styles.statItem}>
-                            <div className={styles.statNumber}>15K+</div>
-                            <div className={styles.statLabel}>Active Users</div>
-                        </div>
-                        <div className={styles.statItem}>
-                            <div className={styles.statNumber}>250+</div>
-                            <div className={styles.statLabel}>Competitions</div>
-                        </div>
-                        <div className={styles.statItem}>
-                            <div className={styles.statNumber}>$1M+</div>
-                            <div className={styles.statLabel}>Prizes Awarded</div>
-                        </div>
-                    </div>
-                </div>
-
-                <div className={styles.heroVisual}>
-                    <div className={styles.heroCard}>
-                        <div className={styles.heroCardHeader}>
-                            <div className={styles.heroCardIcon}>🏆</div>
+                    <div className={styles.heroFeatures}>
+                        <div className={styles.featureItem}>
+                            <div className={styles.featureIcon}>
+                                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                                    <path d="M12 2L2 7l10 5 10-5-10-5z"/>
+                                    <path d="M2 17l10 5 10-5"/>
+                                    <path d="M2 12l10 5 10-5"/>
+                                </svg>
+                            </div>
                             <div>
-                                <div className={styles.heroCardTitle}>Live Rankings</div>
-                                <div className={styles.heroCardSubtitle}>Image Classification Challenge</div>
+                                <div className={styles.featureTitle}>Real-World Datasets</div>
+                                <div className={styles.featureDesc}>Tackle challenges with industry-grade datasets</div>
                             </div>
                         </div>
 
-                        <div className={styles.miniLeaderboard}>
-                            <LeaderboardRow rank={1} initials="SN" name="Sarah_Neural" score="0.9847 accuracy" rating={2450} rankClass="gold" />
-                            <LeaderboardRow rank={2} initials="DL" name="DeepLearner99" score="0.9821 accuracy" rating={2380} rankClass="silver" />
-                            <LeaderboardRow rank={3} initials="TF" name="TensorFlow_Pro" score="0.9798 accuracy" rating={2315} rankClass="bronze" />
+                        <div className={styles.featureItem}>
+                            <div className={styles.featureIcon}>
+                                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                                    <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/>
+                                    <circle cx="9" cy="7" r="4"/>
+                                    <path d="M22 21v-2a4 4 0 0 0-3-3.87"/>
+                                    <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+                                </svg>
+                            </div>
+                            <div>
+                                <div className={styles.featureTitle}>Competitive Community</div>
+                                <div className={styles.featureDesc}>Learn from top ML practitioners worldwide</div>
+                            </div>
+                        </div>
+
+                        <div className={styles.featureItem}>
+                            <div className={styles.featureIcon}>
+                                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                                    <path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"/>
+                                    <path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"/>
+                                    <path d="M4 22h16"/>
+                                    <path d="M10 14.66V17c0 .55-.47.98-.97 1.21C7.85 18.75 7 20.24 7 22"/>
+                                    <path d="M14 14.66V17c0 .55.47.98.97 1.21C16.15 18.75 17 20.24 17 22"/>
+                                    <path d="M18 2H6v7a6 6 0 0 0 12 0V2Z"/>
+                                </svg>
+                            </div>
+                            <div>
+                                <div className={styles.featureTitle}>ELO Rating System</div>
+                                <div className={styles.featureDesc}>Track your skill progression and global ranking</div>
+                            </div>
+                        </div>
+
+                        <div className={styles.featureItem}>
+                            <div className={styles.featureIcon}>
+                                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                                    <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/>
+                                </svg>
+                            </div>
+                            <div>
+                                <div className={styles.featureTitle}>Live Leaderboards</div>
+                                <div className={styles.featureDesc}>Real-time rankings and performance metrics</div>
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
         </section>
-    );
-}
-
-interface LeaderboardRowProps {
-    rank: number;
-    initials: string;
-    name: string;
-    score: string;
-    rating: number;
-    rankClass: string;
-}
-
-function LeaderboardRow({ rank, initials, name, score, rating, rankClass }: LeaderboardRowProps) {
-    return (
-        <div className={styles.leaderboardRow}>
-            <div className={`${styles.rank} ${styles[rankClass]}`}>{rank}</div>
-            <div className={styles.userAvatar}>{initials}</div>
-            <div className={styles.userInfo}>
-                <div className={styles.userName}>{name}</div>
-                <div className={styles.userScore}>{score}</div>
-            </div>
-            <div className={styles.ratingBadge}>{rating}</div>
-        </div>
     );
 }
