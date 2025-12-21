@@ -10,17 +10,26 @@ interface ApiResponse<T> {
 class ApiService {
     private token: string | null = null;
 
+    constructor() {
+        // Initialize token from localStorage on startup
+        if (typeof window !== 'undefined') {
+            this.token = localStorage.getItem('mlbattle_token');
+        }
+    }
+
     setToken(token: string) {
         this.token = token;
         if (typeof window !== 'undefined') {
             localStorage.setItem('mlbattle_token', token);
+            console.log('Token set:', token.substring(0, 20) + '...');
         }
     }
 
     getToken(): string | null {
         if (this.token) return this.token;
         if (typeof window !== 'undefined') {
-            return localStorage.getItem('mlbattle_token');
+            this.token = localStorage.getItem('mlbattle_token');
+            return this.token;
         }
         return null;
     }
@@ -74,6 +83,24 @@ class ApiService {
 
     async getProfile() {
         return this.request('/auth/me');
+    }
+
+    // Profile endpoints
+    async getUserProfile() {
+        return this.request('/profile');
+    }
+
+    async updateProfile(data: {
+        name?: string;
+        bio?: string;
+        github?: string;
+        linkedin?: string;
+        kaggleUsername?: string;
+    }) {
+        return this.request('/profile', {
+            method: 'PUT',
+            body: JSON.stringify(data),
+        });
     }
 
     // Events endpoints

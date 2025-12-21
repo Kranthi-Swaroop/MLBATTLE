@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
 import { Label } from '@/components/ui/Label';
+import api from '@/lib/api';
 
 import styles from './animated-signup.module.css';
 
@@ -257,32 +258,20 @@ export default function AnimatedSignupPage() {
         setIsLoading(true);
 
         try {
-            const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000/api';
-            const response = await fetch(`${API_BASE_URL}/auth/register`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({
-                    name,
-                    email,
-                    kaggleUsername,
-                    password
-                }),
-            });
+            const response = await api.register(email, password, name, kaggleUsername);
 
-            const data = await response.json();
-
-            if (data.success) {
+            if (response.success && response.data) {
                 console.log('✅ Sign up successful!');
-                // Store auth token and user data
-                localStorage.setItem('token', data.data.token);
-                localStorage.setItem('user', JSON.stringify(data.data.user));
+                // Store auth token using api service
+                api.setToken(response.data.token);
 
-                // Redirect to home page
-                router.push('/');
+                // Dispatch custom event to notify navbar
+                window.dispatchEvent(new Event('auth-change'));
+
+                // Redirect to profile page
+                router.push('/profile');
             } else {
-                setError(data.message || 'Registration failed. Please try again.');
+                setError(response.message || 'Registration failed. Please try again.');
                 setIsLoading(false);
             }
         } catch (err) {

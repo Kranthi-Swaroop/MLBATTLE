@@ -9,6 +9,7 @@ const authRoutes = require('./routes/auth');
 const teamRoutes = require('./routes/teams');
 const eventRoutes = require('./routes/events');
 const competitionRoutes = require('./routes/competitions');
+const profileRoutes = require('./routes/profile');
 
 // Import cron jobs
 const { startLeaderboardSync } = require('./jobs/leaderboardSync');
@@ -28,6 +29,7 @@ app.use('/api/auth', authRoutes);
 app.use('/api/teams', teamRoutes);
 app.use('/api/events', eventRoutes);
 app.use('/api/competitions', competitionRoutes);
+app.use('/api/profile', profileRoutes);
 
 // Health check
 app.get('/api/health', (req, res) => {
