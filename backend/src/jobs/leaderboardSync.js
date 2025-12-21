@@ -1,5 +1,5 @@
 const cron = require('node-cron');
-const { syncAllCompetitions } = require('../services/kaggleService');
+const { syncAllCompetitions } = require('../services/kaggleSync');
 
 let syncJob = null;
 

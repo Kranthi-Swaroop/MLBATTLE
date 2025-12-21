@@ -5,7 +5,7 @@ const Event = require('../models/Event');
 const Registration = require('../models/Registration');
 const Team = require('../models/Team');
 const { protect, adminOnly } = require('../middleware/auth');
-const { syncCompetitionLeaderboard } = require('../services/kaggleService');
+const { syncCompetitionLeaderboard, fetchCompetitionDetails } = require('../services/kaggleSync');
 
 const router = express.Router();
 
@@ -79,6 +79,114 @@ router.get('/:id', async (req, res) => {
             success: false,
             message: 'Server error',
             error: process.env.NODE_ENV === 'development' ? error.message : undefined
+        });
+    }
+});
+
+// @route   POST /api/competitions/import
+// @desc    Import competition from Kaggle URL
+// @access  Private/Admin
+router.post('/import', protect, adminOnly, [
+    body('url').trim().notEmpty().withMessage('Kaggle URL is required'),
+    body('eventId').optional().notEmpty().withMessage('Event ID cannot be empty')
+], async (req, res) => {
+    try {
+        const errors = validationResult(req);
+        if (!errors.isEmpty()) {
+            return res.status(400).json({
+                success: false,
+                errors: errors.array()
+            });
+        }
+
+        const { url, eventId } = req.body;
+
+        // Extract slug from URL
+        // Expected format: https://www.kaggle.com/competitions/[slug]
+        // or just [slug]
+        let slug = url;
+        if (url.includes('kaggle.com/competitions/')) {
+            slug = url.split('kaggle.com/competitions/')[1].split('/')[0];
+        }
+
+        console.log(`Importing competition: ${slug}`);
+
+        // Fetch details from Kaggle
+        const details = await fetchCompetitionDetails(slug);
+
+        // Find or create event if not provided
+        let targetEventId = eventId;
+        if (!targetEventId) {
+            // Try to find an active event named "Imported Competitions"
+            let defaultEvent = await Event.findOne({ name: 'Imported Competitions' });
+
+            if (!defaultEvent) {
+                // Create it
+                defaultEvent = await Event.create({
+                    name: 'Imported Competitions',
+                    description: 'Container for competitions imported via API',
+                    startDate: new Date(),
+                    endDate: new Date(new Date().setFullYear(new Date().getFullYear() + 1)), // 1 year out
+                    isActive: true,
+                    createdBy: req.user._id
+                });
+            }
+            targetEventId = defaultEvent._id;
+        }
+
+        // Check availability
+        let competition = await Competition.findOne({ kaggleSlug: details.kaggleSlug });
+
+        if (competition) {
+            // Update existing
+            competition.title = details.title || competition.title;
+            competition.description = details.description || competition.description;
+            competition.kaggleUrl = details.url;
+            competition.deadline = details.deadline;
+
+            // If it belongs to a different event, we might move it? 
+            // For now, keep existing event unless explicitly moved.
+            if (eventId && competition.event.toString() !== eventId) {
+                // Remove from old event
+                await Event.findByIdAndUpdate(competition.event, {
+                    $pull: { competitions: competition._id }
+                });
+                // Add to new
+                competition.event = eventId;
+                await Event.findByIdAndUpdate(eventId, {
+                    $push: { competitions: competition._id }
+                });
+            }
+
+            await competition.save();
+        } else {
+            // Create new
+            competition = await Competition.create({
+                kaggleSlug: details.kaggleSlug,
+                title: details.title || slug, // Fallback if title parsing failed
+                description: details.description,
+                kaggleUrl: details.url,
+                deadline: details.deadline,
+                event: targetEventId
+            });
+
+            // Add to event
+            await Event.findByIdAndUpdate(targetEventId, {
+                $push: { competitions: competition._id }
+            });
+        }
+
+        res.status(200).json({
+            success: true,
+            message: 'Competition imported successfully',
+            data: competition
+        });
+
+    } catch (error) {
+        console.error('Import error:', error);
+        res.status(500).json({
+            success: false,
+            message: error.message || 'Failed to import competition'
         });
     }
 });
