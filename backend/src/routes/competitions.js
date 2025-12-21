@@ -6,6 +6,7 @@ const Registration = require('../models/Registration');
 const Team = require('../models/Team');
 const { protect, adminOnly } = require('../middleware/auth');
 const { syncCompetitionLeaderboard, fetchCompetitionDetails } = require('../services/kaggleSync');
+const EloService = require('../services/eloService');
 
 const router = express.Router();
 
@@ -167,7 +168,12 @@ router.post('/import', protect, adminOnly, [
                 description: details.description,
                 kaggleUrl: details.url,
                 deadline: details.deadline,
-                event: targetEventId
+                event: targetEventId,
+                higherIsBetter: req.body.higherIsBetter !== undefined ? req.body.higherIsBetter : true,
+                metricMinValue: req.body.metricMinValue || 0,
+                metricMaxValue: req.body.metricMaxValue || 1,
+                pointsForPerfectScore: req.body.pointsForPerfectScore || 100,
+                ratingWeight: req.body.ratingWeight || 1
             });
 
             // Add to event
@@ -237,7 +243,12 @@ router.post('/', protect, adminOnly, [
             kaggleSlug,
             title,
             description,
-            event: eventId
+            event: eventId,
+            higherIsBetter: req.body.higherIsBetter !== undefined ? req.body.higherIsBetter : true,
+            metricMinValue: req.body.metricMinValue || 0,
+            metricMaxValue: req.body.metricMaxValue || 1,
+            pointsForPerfectScore: req.body.pointsForPerfectScore || 100,
+            ratingWeight: req.body.ratingWeight || 1
         });
 
         // Add competition to event's competitions array
@@ -459,9 +470,48 @@ router.delete('/:id', protect, adminOnly, async (req, res) => {
             message: 'Competition deleted'
         });
     } catch (error) {
+        console.error('Delete competition error:', error);
         res.status(500).json({
             success: false,
             message: 'Server error'
+        });
+    }
+});
+
+// @route   POST /api/competitions/:id/finalize
+// @desc    Finalize competition and update user ELO ratings (admin only)
+// @access  Private/Admin
+router.post('/:id/finalize', protect, adminOnly, async (req, res) => {
+    try {
+        const competition = await Competition.findById(req.params.id)
+            .populate('leaderboard.platformUser');
+
+        if (!competition) {
+            return res.status(404).json({
+                success: false,
+                message: 'Competition not found'
+            });
+        }
+
+        if (!competition.leaderboard || competition.leaderboard.length === 0) {
+            return res.status(400).json({
+                success: false,
+                message: 'Cannot finalize competition with no leaderboard data'
+            });
+        }
+
+        const result = await EloService.processCompetitionRatings(competition);
+
+        res.json({
+            success: true,
+            message: 'Competition ratings processed and ELOs updated',
+            data: result
+        });
+    } catch (error) {
+        console.error('Finalize competition error:', error);
+        res.status(500).json({
+            success: false,
+            message: error.message || 'Failed to finalize competition'
         });
     }
 });

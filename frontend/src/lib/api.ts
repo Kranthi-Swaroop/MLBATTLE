@@ -156,8 +156,34 @@ class ApiService {
         title: string;
         description?: string;
         eventId: string;
+        higherIsBetter?: boolean;
+        metricMinValue?: number;
+        metricMaxValue?: number;
+        pointsForPerfectScore?: number;
+        ratingWeight?: number;
     }) {
         return this.request('/competitions', {
+            method: 'POST',
+            body: JSON.stringify(data),
+        });
+    }
+
+    async deleteCompetition(id: string) {
+        return this.request(`/competitions/${id}`, {
+            method: 'DELETE',
+        });
+    }
+
+    async importCompetition(data: {
+        url: string;
+        eventId?: string;
+        higherIsBetter?: boolean;
+        metricMinValue?: number;
+        metricMaxValue?: number;
+        pointsForPerfectScore?: number;
+        ratingWeight?: number;
+    }) {
+        return this.request('/competitions/import', {
             method: 'POST',
             body: JSON.stringify(data),
         });
@@ -178,6 +204,16 @@ class ApiService {
         return this.request(`/competitions/${competitionId}/sync`, {
             method: 'POST',
         });
+    }
+
+    async finalizeCompetition(competitionId: string) {
+        return this.request(`/competitions/${competitionId}/finalize`, {
+            method: 'POST',
+        });
+    }
+
+    async getRegistrations(competitionId: string) {
+        return this.request(`/competitions/${competitionId}/registrations`);
     }
 
     // Teams endpoints

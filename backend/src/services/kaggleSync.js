@@ -2,7 +2,32 @@ const { spawn } = require('child_process');
 const Competition = require('../models/Competition');
 const User = require('../models/User');
 
-const parseLeaderboardCSV = (csvData) => {
+const calculateNormalizedScore = (value, config) => {
+    try {
+        const { higherIsBetter, metricMinValue, metricMaxValue, pointsForPerfectScore } = config;
+        const val = parseFloat(value) || 0;
+        const min = parseFloat(metricMinValue) || 0;
+        const max = parseFloat(metricMaxValue) || 1;
+        const psPoints = parseFloat(pointsForPerfectScore) || 100;
+
+        if (max === min) return 0;
+
+        let normalized;
+        if (higherIsBetter) {
+            normalized = ((val - min) / (max - min)) * psPoints;
+        } else {
+            normalized = ((max - val) / (max - min)) * psPoints;
+        }
+
+        // Clamp between 0 and pointsForPerfectScore
+        return Math.max(0, Math.min(psPoints, normalized));
+    } catch (error) {
+        console.error('Error calculating normalized score:', error);
+        return 0;
+    }
+};
+
+const parseLeaderboardCSV = (csvData, competition) => {
     const lines = csvData.trim().split('\n');
     const csvLines = lines.filter(line => line.includes(',') && !line.startsWith('Next Page Token'));
     if (csvLines.length < 2) return [];
@@ -18,11 +43,15 @@ const parseLeaderboardCSV = (csvData) => {
                 entry[header] = values[index] || '';
             });
 
+            const rawScore = parseFloat(entry.score || entry.publicscore || 0);
+            const normalizedScore = calculateNormalizedScore(rawScore, competition);
+
             entries.push({
                 rank: parseInt(entry.rank || entry['#'] || i, 10),
                 kaggleUsername: entry.teamname || entry.team || entry.username || '',
                 teamName: entry.teamname || entry.team || '',
-                score: parseFloat(entry.score || entry.publicscore || 0),
+                score: normalizedScore, // Using normalized score for platform leaderboard
+                rawScore: rawScore,     // Keeping raw score for reference
                 entries: parseInt(entry.entries || entry.submissions || 0, 10),
                 lastSubmission: entry.lastsubmission ? new Date(entry.lastsubmission) : null
             });
@@ -162,7 +191,7 @@ const syncCompetitionLeaderboard = async (competition) => {
         await competition.save();
 
         const csvData = await fetchKaggleLeaderboard(competition.kaggleSlug);
-        const leaderboard = parseLeaderboardCSV(csvData);
+        const leaderboard = parseLeaderboardCSV(csvData, competition);
 
         if (leaderboard.length === 0) throw new Error('No leaderboard data received');
 

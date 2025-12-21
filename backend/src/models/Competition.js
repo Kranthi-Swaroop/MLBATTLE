@@ -51,6 +51,27 @@ const competitionSchema = new mongoose.Schema({
     },
     syncError: {
         type: String
+    },
+    // Scoring configuration
+    higherIsBetter: {
+        type: Boolean,
+        default: true
+    },
+    metricMinValue: {
+        type: Number,
+        default: 0.0
+    },
+    metricMaxValue: {
+        type: Number,
+        default: 1.0
+    },
+    pointsForPerfectScore: {
+        type: Number,
+        default: 100.0
+    },
+    ratingWeight: {
+        type: Number,
+        default: 1.0
     }
 }, {
     timestamps: true
