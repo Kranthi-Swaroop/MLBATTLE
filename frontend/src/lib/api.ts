@@ -7,6 +7,20 @@ interface ApiResponse<T> {
     errors?: Array<{ msg: string }>;
 }
 
+export interface UserProfile {
+    _id: string;
+    name: string;
+    email: string;
+    kaggleUsername: string;
+    elo: number;
+    eventsAttended: number;
+    problemsSolved: number;
+    bio?: string;
+    github?: string;
+    linkedin?: string;
+    createdAt: string;
+}
+
 class ApiService {
     private token: string | null = null;
 
@@ -81,12 +95,12 @@ class ApiService {
         });
     }
 
-    async getProfile() {
+    async getProfile(): Promise<ApiResponse<UserProfile>> {
         return this.request('/auth/me');
     }
 
     // Profile endpoints
-    async getUserProfile() {
+    async getUserProfile(): Promise<ApiResponse<UserProfile>> {
         return this.request('/profile');
     }
 
@@ -96,7 +110,7 @@ class ApiService {
         github?: string;
         linkedin?: string;
         kaggleUsername?: string;
-    }) {
+    }): Promise<ApiResponse<UserProfile>> {
         return this.request('/profile', {
             method: 'PUT',
             body: JSON.stringify(data),

@@ -2,22 +2,8 @@
 
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import api from '@/lib/api';
+import api, { UserProfile } from '@/lib/api';
 import styles from './profile.module.css';
-
-interface UserProfile {
-    _id: string;
-    name: string;
-    email: string;
-    kaggleUsername: string;
-    elo: number;
-    eventsAttended: number;
-    problemsSolved: number;
-    bio?: string;
-    github?: string;
-    linkedin?: string;
-    createdAt: string;
-}
 
 export default function ProfilePage() {
     const router = useRouter();
@@ -41,9 +27,9 @@ export default function ProfilePage() {
     const fetchProfile = async () => {
         setLoading(true);
         const response = await api.getUserProfile();
-        
+
         if (response.success && response.data) {
-            const profileData = response.data as UserProfile;
+            const profileData = response.data;
             setProfile(profileData);
             setFormData({
                 name: profileData.name || '',
@@ -75,7 +61,7 @@ export default function ProfilePage() {
 
         if (response.success && response.data) {
             setSuccess('Profile updated successfully!');
-            setProfile(response.data as UserProfile);
+            setProfile(response.data);
             setEditing(false);
             setTimeout(() => setSuccess(''), 3000);
         } else {

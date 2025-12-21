@@ -2,8 +2,9 @@
 
 import React, { useEffect, useRef, useState } from 'react';
 import Link from 'next/link';
-import { usePathname } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
 import { gsap } from 'gsap';
+import api from '@/lib/api';
 import './PillNav.css';
 
 export type PillNavItem = {
@@ -21,6 +22,11 @@ export interface PillNavProps {
     hoveredPillTextColor?: string;
     pillTextColor?: string;
 }
+
+type NavItemWithAction = PillNavItem & {
+    onClick?: () => void;
+    className?: string;
+};
 
 const PillNav: React.FC<PillNavProps> = ({
     items,
@@ -40,6 +46,29 @@ const PillNav: React.FC<PillNavProps> = ({
     const mobileMenuRef = useRef<HTMLDivElement | null>(null);
     const navItemsRef = useRef<HTMLDivElement | null>(null);
     const logoRef = useRef<HTMLAnchorElement | null>(null);
+    const [isLoggedIn, setIsLoggedIn] = useState(false);
+    const [userName, setUserName] = useState('');
+
+    const checkAuthStatus = async () => {
+        const token = api.getToken();
+        if (token) {
+            try {
+                const response = await api.getUserProfile();
+                if (response.success && response.data) {
+                    setIsLoggedIn(true);
+                    setUserName(response.data.name);
+                } else {
+                    setIsLoggedIn(false);
+                    api.clearToken();
+                }
+            } catch (err) {
+                console.error('Auth check failed:', err);
+                setIsLoggedIn(false);
+            }
+        } else {
+            setIsLoggedIn(false);
+        }
+    };
 
     useEffect(() => {
         const layout = () => {
@@ -116,8 +145,50 @@ const PillNav: React.FC<PillNavProps> = ({
             gsap.to(navItems, { width: 'auto', duration: 0.6, ease });
         }
 
-        return () => window.removeEventListener('resize', onResize);
+        // Initial auth check
+        checkAuthStatus();
+
+        // Listen for storage changes (login/logout from other tabs)
+        const handleStorageChange = () => checkAuthStatus();
+
+        // Listen for custom auth-change event
+        const handleAuthChange = () => {
+            console.log('Auth change detected in PillNav, rechecking...');
+            checkAuthStatus();
+        };
+
+        window.addEventListener('storage', handleStorageChange);
+        window.addEventListener('auth-change', handleAuthChange);
+
+        return () => {
+            window.removeEventListener('resize', onResize);
+            window.removeEventListener('storage', handleStorageChange);
+            window.removeEventListener('auth-change', handleAuthChange);
+        };
     }, [items, ease]);
+
+    // Re-check auth status when route changes
+    useEffect(() => {
+        checkAuthStatus();
+    }, [pathname]);
+
+    const handleLogout = () => {
+        api.clearToken();
+        setIsLoggedIn(false);
+        setUserName('');
+        window.dispatchEvent(new Event('auth-change'));
+        router.push('/');
+    };
+
+    const navActions: NavItemWithAction[] = isLoggedIn ? [
+        { label: `👤 ${userName}`, href: '/profile', className: 'user-profile-btn' },
+        { label: 'Logout', href: '#', onClick: handleLogout, className: 'logout-btn btn-primary' }
+    ] : [
+        { label: 'Sign In', href: '/login', className: 'btn-ghost' },
+        { label: 'Get Started', href: '/signup', className: 'btn-primary' }
+    ];
+
+    const allNavItems = [...items, ...navActions];
 
     const handleEnter = (i: number) => {
         const tl = tlRefs.current[i];
@@ -205,42 +276,65 @@ const PillNav: React.FC<PillNavProps> = ({
 
                 <div className="pill-nav-items desktop-only" ref={navItemsRef}>
                     <ul className="pill-list" role="menubar">
-                        {items.map((item, i) => (
-                            <li key={item.href} role="none">
-                                <Link
-                                    role="menuitem"
-                                    href={item.href}
-                                    className={`pill${pathname === item.href ? ' is-active' : ''}`}
-                                    aria-label={item.ariaLabel || item.label}
-                                    onMouseEnter={() => handleEnter(i)}
-                                    onMouseLeave={() => handleLeave(i)}
-                                >
-                                    <span
-                                        className="hover-circle"
-                                        aria-hidden="true"
-                                        ref={el => {
-                                            circleRefs.current[i] = el;
+                        {allNavItems.map((item: NavItemWithAction, i) => (
+                            <li key={`${item.href}-${i}`} role="none">
+                                {item.onClick ? (
+                                    <button
+                                        role="menuitem"
+                                        className={`pill ${item.className || ''}`}
+                                        onClick={(e) => {
+                                            e.preventDefault();
+                                            item.onClick?.();
                                         }}
-                                    />
-                                    <span className="label-stack">
-                                        <span className="pill-label">{item.label}</span>
-                                        <span className="pill-label-hover" aria-hidden="true">
-                                            {item.label}
+                                        onMouseEnter={() => handleEnter(i)}
+                                        onMouseLeave={() => handleLeave(i)}
+                                    >
+                                        <span
+                                            className="hover-circle"
+                                            aria-hidden="true"
+                                            ref={el => {
+                                                circleRefs.current[i] = el;
+                                            }}
+                                        />
+                                        <span className="label-stack">
+                                            <span className="pill-label">{item.label}</span>
+                                            <span className="pill-label-hover" aria-hidden="true">
+                                                {item.label}
+                                            </span>
                                         </span>
-                                    </span>
-                                </Link>
+                                    </button>
+                                ) : (
+                                    <Link
+                                        role="menuitem"
+                                        href={item.href}
+                                        className={`pill ${item.className || ''}${pathname === item.href ? ' is-active' : ''}`}
+                                        aria-label={item.ariaLabel || item.label}
+                                        onMouseEnter={() => handleEnter(i)}
+                                        onMouseLeave={() => handleLeave(i)}
+                                    >
+                                        <span
+                                            className="hover-circle"
+                                            aria-hidden="true"
+                                            ref={el => {
+                                                circleRefs.current[i] = el;
+                                            }}
+                                        />
+                                        <span className="label-stack">
+                                            <span className="pill-label">{item.label}</span>
+                                            <span className="pill-label-hover" aria-hidden="true">
+                                                {item.label}
+                                            </span>
+                                        </span>
+                                    </Link>
+                                )}
                             </li>
                         ))}
                     </ul>
                 </div>
 
-                <div className="nav-actions desktop-only">
-                    <Link href="/login" className="btn btn-ghost">Sign In</Link>
-                    <Link href="/signup" className="btn btn-primary">Get Started</Link>
-                </div>
-
                 <button
                     className="mobile-menu-button mobile-only"
+
                     onClick={toggleMobileMenu}
                     aria-label="Toggle menu"
                     ref={hamburgerRef}
@@ -263,6 +357,47 @@ const PillNav: React.FC<PillNavProps> = ({
                             </Link>
                         </li>
                     ))}
+                    <div className="mobile-actions">
+                        {isLoggedIn ? (
+                            <>
+                                <Link
+                                    href="/profile"
+                                    className="mobile-menu-link"
+                                    onClick={() => setIsMobileMenuOpen(false)}
+                                >
+                                    👤 {userName}
+                                </Link>
+                                <button
+                                    onClick={() => {
+                                        handleLogout();
+                                        setIsMobileMenuOpen(false);
+                                    }}
+                                    className="btn btn-primary logout-btn"
+                                    style={{ width: '100%', marginTop: '0.5rem' }}
+                                >
+                                    Logout
+                                </button>
+                            </>
+                        ) : (
+                            <>
+                                <Link
+                                    href="/login"
+                                    className="mobile-menu-link"
+                                    onClick={() => setIsMobileMenuOpen(false)}
+                                >
+                                    Sign In
+                                </Link>
+                                <Link
+                                    href="/signup"
+                                    className="btn btn-primary"
+                                    style={{ width: '100%', marginTop: '0.5rem', textAlign: 'center' }}
+                                    onClick={() => setIsMobileMenuOpen(false)}
+                                >
+                                    Get Started
+                                </Link>
+                            </>
+                        )}
+                    </div>
                 </ul>
             </div>
         </div>
