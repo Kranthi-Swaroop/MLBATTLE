@@ -48,6 +48,9 @@ class EloService {
         const weight = competition.ratingWeight || 1.0;
         const updates = [];
 
+        console.log(`[EloService] Processing ratings for competition: ${competition.title}`);
+        console.log(`[EloService] Total participants: ${totalParticipants}`);
+
         for (const entry of competition.leaderboard) {
             if (entry.platformUser) {
                 const user = await User.findById(entry.platformUser);
@@ -60,6 +63,8 @@ class EloService {
                         weight
                     );
 
+                    console.log(`[EloService] Updating ${user.name} (Kaggle: ${entry.kaggleUsername}): ${oldElo} → ${newElo} (Rank: ${entry.rank})`);
+
                     user.elo = newElo;
                     user.competitionsParticipated = (user.competitionsParticipated || 0) + 1;
                     await user.save();
@@ -67,13 +72,20 @@ class EloService {
                     updates.push({
                         userId: user._id,
                         name: user.name,
+                        kaggleUsername: entry.kaggleUsername,
                         oldElo,
                         newElo,
                         change: newElo - oldElo
                     });
+                } else {
+                    console.log(`[EloService] Warning: platformUser ${entry.platformUser} not found for Kaggle user ${entry.kaggleUsername}`);
                 }
+            } else {
+                console.log(`[EloService] Skipping entry for ${entry.kaggleUsername} - no platform user linked`);
             }
         }
+
+        console.log(`[EloService] Completed. Processed ${updates.length} participants.`);
 
         return {
             success: true,

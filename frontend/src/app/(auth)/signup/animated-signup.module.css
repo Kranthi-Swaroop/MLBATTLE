@@ -249,7 +249,48 @@
     color: var(--text-primary);
 }
 
+/* Password Strength Indicator */
+.passwordStrength {
+    margin-top: 0.5rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
 
+.strengthBar {
+    height: 4px;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 2px;
+    overflow: hidden;
+}
+
+.strengthFill {
+    height: 100%;
+    border-radius: 2px;
+    transition: width 0.3s ease, background-color 0.3s ease;
+}
+
+.strengthLabel {
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.strengthChecks {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem 1rem;
+    font-size: 0.7rem;
+}
+
+.checkPass {
+    color: #22c55e;
+}
+
+.checkFail {
+    color: #64748b;
+}
 
 .errorMessage {
     padding: 0.75rem 1rem;

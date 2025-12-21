@@ -102,11 +102,10 @@ export default function Navbar() {
 
                 <div className={`${styles.navLinks} ${mobileMenuOpen ? styles.active : ''}`}>
                     <Link href="/">Home</Link>
-                    <Link href="/stats">About</Link>
+                    <Link href="/about">About</Link>
                     <Link href="/events">Events</Link>
-                    <Link href="/events/ml-olympics-2024/discussions">Discussions</Link>
+                    <Link href="/discussions">Discussions</Link>
                     <Link href="/leaderboard">Leaderboard</Link>
-                    <Link href="/#features">Features</Link>
                 </div>
 
                 <div className={styles.navActions}>

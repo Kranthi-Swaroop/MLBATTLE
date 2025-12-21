@@ -176,13 +176,53 @@ const fetchCompetitionDetails = (slug) => {
 
 const matchPlatformUsers = async (leaderboard) => {
     const kaggleUsernames = leaderboard.map(entry => entry.kaggleUsername).filter(Boolean);
-    const users = await User.find({ kaggleUsername: { $in: kaggleUsernames } }).select('_id kaggleUsername');
-    const userMap = new Map();
-    users.forEach(user => userMap.set(user.kaggleUsername.toLowerCase(), user._id));
-    return leaderboard.map(entry => ({
-        ...entry,
-        platformUser: userMap.get(entry.kaggleUsername.toLowerCase()) || null
-    }));
+    
+    // Get all users - name field is used as Kaggle display name
+    const users = await User.find({}).select('_id name');
+    
+    // Build lookup maps for matching (user's name = their Kaggle display name)
+    const exactNameMap = new Map(); // 1. Exact match on name (case-insensitive)
+    const normalizedNameMap = new Map(); // 2. Normalized name match (fallback)
+    
+    users.forEach(user => {
+        const name = user.name || '';
+        exactNameMap.set(name.toLowerCase(), user);
+        const normalizedName = name.toLowerCase().replace(/[\s_-]/g, '');
+        normalizedNameMap.set(normalizedName, user);
+    });
+    
+    console.log(`[KaggleSync] Attempting to match ${kaggleUsernames.length} leaderboard entries against ${users.length} platform users`);
+    
+    return leaderboard.map(entry => {
+        const leaderboardName = entry.kaggleUsername || '';
+        const leaderboardNameLower = leaderboardName.toLowerCase();
+        const leaderboardNameNormalized = leaderboardNameLower.replace(/[\s_-]/g, '');
+        
+        // Try matching strategies:
+        // 1. Exact match on name (user's name should be their Kaggle display name)
+        // 2. Normalized match on name (fallback for minor differences)
+        
+        let matchedUser = exactNameMap.get(leaderboardNameLower);
+        let matchType = 'name-exact';
+        
+        if (!matchedUser) {
+            matchedUser = normalizedNameMap.get(leaderboardNameNormalized);
+            matchType = 'name-normalized';
+        }
+        
+        if (matchedUser) {
+            console.log(`[KaggleSync] Matched (${matchType}): "${leaderboardName}" → ${matchedUser.name}`);
+            return {
+                ...entry,
+                platformUser: matchedUser._id
+            };
+        }
+        
+        return {
+            ...entry,
+            platformUser: null
+        };
+    });
 };
 
 const syncCompetitionLeaderboard = async (competition) => {
@@ -242,8 +282,11 @@ const syncAllCompetitions = async () => {
             if (isEventEnded && !competition.isFinalized) {
                 console.log(`[KaggleSync] Event ended for ${competition.title}. Finalizing...`);
 
-                // Process ratings
-                await EloService.processCompetitionRatings(competition);
+                // IMPORTANT: Reload competition to get fresh leaderboard data after sync
+                const freshCompetition = await Competition.findById(competition._id);
+                
+                // Process ratings with fresh data
+                await EloService.processCompetitionRatings(freshCompetition);
 
                 // Mark competition as finalized
                 competition.isFinalized = true;

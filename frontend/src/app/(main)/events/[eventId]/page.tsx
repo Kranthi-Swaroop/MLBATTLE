@@ -426,9 +426,6 @@ export default function EventDetailPage() {
                         >
                             📊 Leaderboard
                         </button>
-                        <Link href={`/events/${eventId}/discussions`} className={styles.tab}>
-                            💬 Discussions
-                        </Link>
                     </div>
                 </div>
             </div>

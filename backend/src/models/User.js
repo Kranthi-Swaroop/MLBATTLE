@@ -20,13 +20,8 @@ const userSchema = new mongoose.Schema({
         type: String,
         required: [true, 'Name is required'],
         trim: true,
-        maxlength: [50, 'Name cannot exceed 50 characters']
-    },
-    kaggleUsername: {
-        type: String,
-        required: [true, 'Kaggle username is required'],
-        trim: true,
-        unique: true
+        unique: true,
+        maxlength: [100, 'Name cannot exceed 100 characters']
     },
     role: {
         type: String,

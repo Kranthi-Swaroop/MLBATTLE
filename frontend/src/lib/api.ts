@@ -11,7 +11,6 @@ export interface UserProfile {
     _id: string;
     name: string;
     email: string;
-    kaggleUsername: string;
     elo: number;
     eventsAttended: number;
     problemsSolved: number;
@@ -82,10 +81,10 @@ class ApiService {
     }
 
     // Auth endpoints
-    async register(email: string, password: string, name: string, kaggleUsername: string) {
+    async register(email: string, password: string, name: string) {
         return this.request('/auth/register', {
             method: 'POST',
-            body: JSON.stringify({ email, password, name, kaggleUsername }),
+            body: JSON.stringify({ email, password, name }),
         });
     }
 
@@ -110,7 +109,6 @@ class ApiService {
         bio?: string;
         github?: string;
         linkedin?: string;
-        kaggleUsername?: string;
     }): Promise<ApiResponse<UserProfile>> {
         return this.request('/profile', {
             method: 'PUT',
@@ -244,6 +242,24 @@ class ApiService {
     // Leaderboard endpoint
     async getLeaderboard(): Promise<ApiResponse<UserProfile[]>> {
         return this.request('/leaderboard');
+    }
+
+    // Messages endpoints
+    async getMessages() {
+        return this.request('/messages');
+    }
+
+    async sendMessage(content: string) {
+        return this.request('/messages', {
+            method: 'POST',
+            body: JSON.stringify({ content }),
+        });
+    }
+
+    async deleteMessage(messageId: string) {
+        return this.request(`/messages/${messageId}`, {
+            method: 'DELETE',
+        });
     }
 }
 

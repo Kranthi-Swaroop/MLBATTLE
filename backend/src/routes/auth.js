@@ -13,14 +13,39 @@ const generateToken = (id) => {
     });
 };
 
+// Password strength validation helper
+const isStrongPassword = (password) => {
+    const minLength = 8;
+    const hasUppercase = /[A-Z]/.test(password);
+    const hasLowercase = /[a-z]/.test(password);
+    const hasNumber = /[0-9]/.test(password);
+    const hasSpecial = /[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]/.test(password);
+    
+    return {
+        isValid: password.length >= minLength && hasUppercase && hasLowercase && hasNumber && hasSpecial,
+        errors: [
+            password.length < minLength ? 'Password must be at least 8 characters' : null,
+            !hasUppercase ? 'Password must contain at least one uppercase letter' : null,
+            !hasLowercase ? 'Password must contain at least one lowercase letter' : null,
+            !hasNumber ? 'Password must contain at least one number' : null,
+            !hasSpecial ? 'Password must contain at least one special character (!@#$%^&*...)' : null,
+        ].filter(Boolean)
+    };
+};
+
 // @route   POST /api/auth/register
 // @desc    Register a new user
 // @access  Public
 router.post('/register', [
     body('email').isEmail().withMessage('Please enter a valid email'),
-    body('password').isLength({ min: 6 }).withMessage('Password must be at least 6 characters'),
-    body('name').trim().notEmpty().withMessage('Name is required'),
-    body('kaggleUsername').trim().notEmpty().withMessage('Kaggle username is required')
+    body('password').custom((value) => {
+        const result = isStrongPassword(value);
+        if (!result.isValid) {
+            throw new Error(result.errors[0]);
+        }
+        return true;
+    }),
+    body('name').trim().notEmpty().withMessage('Name is required (use your Kaggle display name)')
 ], async (req, res) => {
     try {
         // Check for validation errors
@@ -32,11 +57,11 @@ router.post('/register', [
             });
         }
 
-        const { email, password, name, kaggleUsername } = req.body;
+        const { email, password, name } = req.body;
 
         // Check if user already exists
         const existingUser = await User.findOne({
-            $or: [{ email }, { kaggleUsername }]
+            $or: [{ email }, { name }]
         });
 
         if (existingUser) {
@@ -44,7 +69,7 @@ router.post('/register', [
                 success: false,
                 message: existingUser.email === email
                     ? 'Email already registered'
-                    : 'Kaggle username already registered'
+                    : 'Name already registered (must match your Kaggle display name)'
             });
         }
 
@@ -52,8 +77,7 @@ router.post('/register', [
         const user = await User.create({
             email,
             password,
-            name,
-            kaggleUsername
+            name
         });
 
         // Generate token

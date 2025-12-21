@@ -160,17 +160,61 @@ const EyeBall = ({
     );
 };
 
+interface PasswordStrength {
+    score: number;
+    label: string;
+    color: string;
+    checks: {
+        minLength: boolean;
+        hasUppercase: boolean;
+        hasLowercase: boolean;
+        hasNumber: boolean;
+        hasSpecial: boolean;
+    };
+}
+
+const checkPasswordStrength = (password: string): PasswordStrength => {
+    const checks = {
+        minLength: password.length >= 8,
+        hasUppercase: /[A-Z]/.test(password),
+        hasLowercase: /[a-z]/.test(password),
+        hasNumber: /[0-9]/.test(password),
+        hasSpecial: /[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]/.test(password),
+    };
+    
+    const score = Object.values(checks).filter(Boolean).length;
+    
+    let label = 'Very Weak';
+    let color = '#ef4444';
+    
+    if (score === 5) {
+        label = 'Strong';
+        color = '#22c55e';
+    } else if (score >= 4) {
+        label = 'Good';
+        color = '#84cc16';
+    } else if (score >= 3) {
+        label = 'Fair';
+        color = '#f59e0b';
+    } else if (score >= 2) {
+        label = 'Weak';
+        color = '#f97316';
+    }
+    
+    return { score, label, color, checks };
+};
+
 export default function AnimatedSignupPage() {
     const router = useRouter();
     const [showPassword, setShowPassword] = useState(false);
     const [showConfirmPassword, setShowConfirmPassword] = useState(false);
     const [name, setName] = useState('');
     const [email, setEmail] = useState('');
-    const [kaggleUsername, setKaggleUsername] = useState('');
     const [password, setPassword] = useState('');
     const [confirmPassword, setConfirmPassword] = useState('');
     const [error, setError] = useState('');
     const [isLoading, setIsLoading] = useState(false);
+    const [passwordStrength, setPasswordStrength] = useState<PasswordStrength>(checkPasswordStrength(''));
     const [isPurpleBlinking, setIsPurpleBlinking] = useState(false);
     const [isBlackBlinking, setIsBlackBlinking] = useState(false);
     const [isTyping, setIsTyping] = useState(false);
@@ -234,12 +278,12 @@ export default function AnimatedSignupPage() {
 
     // Characters get excited when all fields are filled
     useEffect(() => {
-        if (name && email && kaggleUsername && password && confirmPassword) {
+        if (name && email && password && confirmPassword) {
             setAreCharactersExcited(true);
         } else {
             setAreCharactersExcited(false);
         }
-    }, [name, email, kaggleUsername, password, confirmPassword]);
+    }, [name, email, password, confirmPassword]);
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -250,15 +294,15 @@ export default function AnimatedSignupPage() {
             return;
         }
 
-        if (password.length < 6) {
-            setError('Password must be at least 6 characters long');
+        if (passwordStrength.score < 5) {
+            setError('Please create a stronger password that meets all requirements');
             return;
         }
 
         setIsLoading(true);
 
         try {
-            const response = await api.register(email, password, name, kaggleUsername);
+            const response = await api.register(email, password, name);
 
             if (response.success && response.data) {
                 console.log('✅ Sign up successful!');
@@ -436,17 +480,20 @@ export default function AnimatedSignupPage() {
 
                     <form onSubmit={handleSubmit} className={styles.form}>
                         <div className={styles.formGroup}>
-                            <Label htmlFor="name">Full Name</Label>
+                            <Label htmlFor="name">Name (Your Kaggle Display Name)</Label>
                             <Input
                                 id="name"
                                 type="text"
-                                placeholder="John Doe"
+                                placeholder="Your name on Kaggle leaderboards"
                                 value={name}
                                 onChange={(e) => setName(e.target.value)}
                                 onFocus={() => setIsTyping(true)}
                                 onBlur={() => setIsTyping(false)}
                                 required
                             />
+                            <small style={{ color: '#94a3b8', fontSize: '0.75rem', marginTop: '4px', display: 'block' }}>
+                                Use the exact name shown on Kaggle leaderboards for ELO matching
+                            </small>
                         </div>
 
                         <div className={styles.formGroup}>
@@ -465,21 +512,6 @@ export default function AnimatedSignupPage() {
                         </div>
 
                         <div className={styles.formGroup}>
-                            <Label htmlFor="kaggleUsername">Kaggle Username</Label>
-                            <Input
-                                id="kaggleUsername"
-                                type="text"
-                                placeholder="kaggle_wizard"
-                                value={kaggleUsername}
-                                autoComplete="off"
-                                onChange={(e) => setKaggleUsername(e.target.value)}
-                                onFocus={() => setIsTyping(true)}
-                                onBlur={() => setIsTyping(false)}
-                                required
-                            />
-                        </div>
-
-                        <div className={styles.formGroup}>
                             <Label htmlFor="password">Password</Label>
                             <div className={styles.passwordWrapper}>
                                 <Input
@@ -487,7 +519,10 @@ export default function AnimatedSignupPage() {
                                     type={showPassword ? 'text' : 'password'}
                                     placeholder="••••••••"
                                     value={password}
-                                    onChange={(e) => setPassword(e.target.value)}
+                                    onChange={(e) => {
+                                        setPassword(e.target.value);
+                                        setPasswordStrength(checkPasswordStrength(e.target.value));
+                                    }}
                                     required
                                 />
                                 <button
@@ -498,6 +533,39 @@ export default function AnimatedSignupPage() {
                                     {showPassword ? '👁️' : '👁️‍🗨️'}
                                 </button>
                             </div>
+                            {password && (
+                                <div className={styles.passwordStrength}>
+                                    <div className={styles.strengthBar}>
+                                        <div 
+                                            className={styles.strengthFill} 
+                                            style={{ 
+                                                width: `${(passwordStrength.score / 5) * 100}%`,
+                                                backgroundColor: passwordStrength.color 
+                                            }} 
+                                        />
+                                    </div>
+                                    <span className={styles.strengthLabel} style={{ color: passwordStrength.color }}>
+                                        {passwordStrength.label}
+                                    </span>
+                                    <div className={styles.strengthChecks}>
+                                        <span className={passwordStrength.checks.minLength ? styles.checkPass : styles.checkFail}>
+                                            {passwordStrength.checks.minLength ? '✓' : '✗'} 8+ characters
+                                        </span>
+                                        <span className={passwordStrength.checks.hasUppercase ? styles.checkPass : styles.checkFail}>
+                                            {passwordStrength.checks.hasUppercase ? '✓' : '✗'} Uppercase
+                                        </span>
+                                        <span className={passwordStrength.checks.hasLowercase ? styles.checkPass : styles.checkFail}>
+                                            {passwordStrength.checks.hasLowercase ? '✓' : '✗'} Lowercase
+                                        </span>
+                                        <span className={passwordStrength.checks.hasNumber ? styles.checkPass : styles.checkFail}>
+                                            {passwordStrength.checks.hasNumber ? '✓' : '✗'} Number
+                                        </span>
+                                        <span className={passwordStrength.checks.hasSpecial ? styles.checkPass : styles.checkFail}>
+                                            {passwordStrength.checks.hasSpecial ? '✓' : '✗'} Special (!@#$...)
+                                        </span>
+                                    </div>
+                                </div>
+                            )}
                         </div>
 
                         <div className={styles.formGroup}>

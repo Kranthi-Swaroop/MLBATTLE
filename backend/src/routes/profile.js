@@ -39,8 +39,7 @@ router.put('/', protect, [
     body('name').optional().trim().notEmpty().withMessage('Name cannot be empty'),
     body('bio').optional().isLength({ max: 500 }).withMessage('Bio cannot exceed 500 characters'),
     body('github').optional().trim(),
-    body('linkedin').optional().trim(),
-    body('kaggleUsername').optional().trim().notEmpty().withMessage('Kaggle username cannot be empty')
+    body('linkedin').optional().trim()
 ], async (req, res) => {
     try {
         // Check for validation errors
@@ -52,15 +51,15 @@ router.put('/', protect, [
             });
         }
 
-        const { name, bio, github, linkedin, kaggleUsername } = req.body;
+        const { name, bio, github, linkedin } = req.body;
 
-        // Check if kaggleUsername is being changed and if it's already taken
-        if (kaggleUsername && kaggleUsername !== req.user.kaggleUsername) {
-            const existingUser = await User.findOne({ kaggleUsername });
+        // Check if name is being changed and if it's already taken
+        if (name && name !== req.user.name) {
+            const existingUser = await User.findOne({ name });
             if (existingUser) {
                 return res.status(400).json({
                     success: false,
-                    message: 'Kaggle username already taken'
+                    message: 'Name already taken (must match your Kaggle display name)'
                 });
             }
         }
@@ -71,7 +70,6 @@ router.put('/', protect, [
         if (bio !== undefined) updateData.bio = bio;
         if (github !== undefined) updateData.github = github;
         if (linkedin !== undefined) updateData.linkedin = linkedin;
-        if (kaggleUsername) updateData.kaggleUsername = kaggleUsername;
 
         const user = await User.findByIdAndUpdate(
             req.user._id,

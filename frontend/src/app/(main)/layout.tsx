@@ -1,14 +1,13 @@
-import PillNav from "@/components/PillNav";
 import { Footer } from "@/components";
+import PillNav from "@/components/PillNav";
 
 const navItems = [
     { label: 'Home', href: '/' },
-    { label: 'About', href: '/stats' },
+    { label: 'About', href: '/about' },
     { label: 'Events', href: '/events' },
-    { label: 'Discussions', href: '/events/ml-olympics-2024/discussions' },
+    { label: 'Discussions', href: '/discussions' },
     { label: 'Leaderboard', href: '/leaderboard' },
 ];
-
 
 export default function MainLayout({
     children,

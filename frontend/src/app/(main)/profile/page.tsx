@@ -17,8 +17,7 @@ export default function ProfilePage() {
         name: '',
         bio: '',
         github: '',
-        linkedin: '',
-        kaggleUsername: ''
+        linkedin: ''
     });
     const [error, setError] = useState('');
     const [success, setSuccess] = useState('');
@@ -38,8 +37,7 @@ export default function ProfilePage() {
                 name: profileData.name || '',
                 bio: profileData.bio || '',
                 github: profileData.github || '',
-                linkedin: profileData.linkedin || '',
-                kaggleUsername: profileData.kaggleUsername || ''
+                linkedin: profileData.linkedin || ''
             });
         } else {
             // Not logged in, redirect to login
@@ -78,8 +76,7 @@ export default function ProfilePage() {
                 name: profile.name || '',
                 bio: profile.bio || '',
                 github: profile.github || '',
-                linkedin: profile.linkedin || '',
-                kaggleUsername: profile.kaggleUsername || ''
+                linkedin: profile.linkedin || ''
             });
         }
         setEditing(false);
@@ -187,12 +184,8 @@ export default function ProfilePage() {
 
                         <div className={styles.detailsGrid}>
                             <div className={styles.detailItem}>
-                                <label>Name</label>
+                                <label>Name (Kaggle Display Name)</label>
                                 <p>{profile.name}</p>
-                            </div>
-                            <div className={styles.detailItem}>
-                                <label>Kaggle Username</label>
-                                <p>{profile.kaggleUsername}</p>
                             </div>
                             <div className={styles.detailItem}>
                                 <label>Bio</label>
@@ -216,7 +209,7 @@ export default function ProfilePage() {
 
                         <div className={styles.formGrid}>
                             <div className={styles.formGroup}>
-                                <label htmlFor="name">Name</label>
+                                <label htmlFor="name">Name (Kaggle Display Name)</label>
                                 <input
                                     type="text"
                                     id="name"
@@ -225,18 +218,9 @@ export default function ProfilePage() {
                                     onChange={handleInputChange}
                                     required
                                 />
-                            </div>
-
-                            <div className={styles.formGroup}>
-                                <label htmlFor="kaggleUsername">Kaggle Username</label>
-                                <input
-                                    type="text"
-                                    id="kaggleUsername"
-                                    name="kaggleUsername"
-                                    value={formData.kaggleUsername}
-                                    onChange={handleInputChange}
-                                    required
-                                />
+                                <small style={{ color: '#94a3b8', fontSize: '0.75rem', marginTop: '4px' }}>
+                                    Use the exact name shown on Kaggle leaderboards for ELO matching
+                                </small>
                             </div>
 
                             <div className={styles.formGroup}>
