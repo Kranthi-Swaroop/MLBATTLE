@@ -216,20 +216,61 @@ const syncCompetitionLeaderboard = async (competition) => {
     }
 };
 
-const syncAllCompetitions = async () => {
-    const competitions = await Competition.find().populate({ path: 'event', match: { isActive: true } });
-    const activeCompetitions = competitions.filter(c => c.event !== null);
-    const results = { total: activeCompetitions.length, success: 0, failed: 0, details: [] };
+const Event = require('../models/Event');
+const EloService = require('./eloService');
 
-    for (const competition of activeCompetitions) {
+const syncAllCompetitions = async () => {
+    // Find competitions where event is active OR competition is NOT finalized
+    const competitions = await Competition.find({ isFinalized: false })
+        .populate('event');
+
+    // Filter out competitions with no event or where event is unexpectedly null
+    const targetCompetitions = competitions.filter(c => c.event !== null);
+
+    const results = { total: targetCompetitions.length, success: 0, failed: 0, details: [] };
+    const now = new Date();
+
+    for (const competition of targetCompetitions) {
         try {
-            const result = await syncCompetitionLeaderboard(competition);
+            const event = competition.event;
+            const isEventEnded = now > new Date(event.endDate);
+
+            // 1. Perform Sync
+            const syncResult = await syncCompetitionLeaderboard(competition);
+
+            // 2. If event has ended, finalize it
+            if (isEventEnded && !competition.isFinalized) {
+                console.log(`[KaggleSync] Event ended for ${competition.title}. Finalizing...`);
+
+                // Process ratings
+                await EloService.processCompetitionRatings(competition);
+
+                // Mark competition as finalized
+                competition.isFinalized = true;
+                await competition.save();
+
+                // Check if all competitions in this event are finalized
+                const eventWithComps = await Event.findById(event._id).populate('competitions');
+                const allFinalized = eventWithComps.competitions.every(c => c.isFinalized);
+
+                if (allFinalized) {
+                    event.isActive = false;
+                    await event.save();
+                    console.log(`[KaggleSync] All competitions finalized. Event ${event.name} set to inactive.`);
+                }
+            }
+
             results.success++;
-            results.details.push(result);
+            results.details.push({
+                competition: competition.kaggleSlug,
+                status: competition.isFinalized ? 'finalized' : 'synced',
+                ...syncResult
+            });
         } catch (error) {
             results.failed++;
             results.details.push({ competition: competition.kaggleSlug, error: error.message });
         }
+        // Wait 2 seconds between Kaggle CLI calls to avoid rate limits
         await new Promise(resolve => setTimeout(resolve, 2000));
     }
     return results;

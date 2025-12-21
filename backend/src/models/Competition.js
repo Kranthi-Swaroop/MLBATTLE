@@ -73,6 +73,10 @@ const competitionSchema = new mongoose.Schema({
     ratingWeight: {
         type: Number,
         default: 1.0
+    },
+    isFinalized: {
+        type: Boolean,
+        default: false
     }
 }, {
     timestamps: true
