@@ -33,6 +33,31 @@ const userSchema = new mongoose.Schema({
         enum: ['user', 'admin'],
         default: 'user'
     },
+    elo: {
+        type: Number,
+        default: 1000
+    },
+    eventsAttended: {
+        type: Number,
+        default: 0
+    },
+    problemsSolved: {
+        type: Number,
+        default: 0
+    },
+    bio: {
+        type: String,
+        trim: true,
+        maxlength: [500, 'Bio cannot exceed 500 characters']
+    },
+    github: {
+        type: String,
+        trim: true
+    },
+    linkedin: {
+        type: String,
+        trim: true
+    },
     teams: [{
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Team'

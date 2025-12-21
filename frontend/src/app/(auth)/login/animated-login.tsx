@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
 import { Label } from '@/components/ui/Label';
+import api from '@/lib/api';
 
 import styles from './animated-login.module.css';
 
@@ -252,30 +253,20 @@ export default function AnimatedLoginPage() {
         setIsLoading(true);
 
         try {
-            const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000/api';
-            const response = await fetch(`${API_BASE_URL}/auth/login`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({
-                    email,
-                    password
-                }),
-            });
+            const response = await api.login(email, password);
 
-            const data = await response.json();
-
-            if (data.success) {
+            if (response.success && response.data) {
                 console.log('✅ Login successful!');
-                // Store auth token and user data
-                localStorage.setItem('token', data.data.token);
-                localStorage.setItem('user', JSON.stringify(data.data.user));
+                // Store auth token using api service
+                api.setToken(response.data.token);
 
-                // Redirect to home page
-                router.push('/');
+                // Dispatch custom event to notify navbar
+                window.dispatchEvent(new Event('auth-change'));
+
+                // Redirect to profile page
+                router.push('/profile');
             } else {
-                setError(data.message || 'Invalid email or password.');
+                setError(response.message || 'Invalid email or password.');
                 console.log('❌ Login failed');
                 setIsLoading(false);
             }
@@ -284,7 +275,6 @@ export default function AnimatedLoginPage() {
             setError('Failed to connect to server. Please try again.');
             setIsLoading(false);
         }
-        setIsLoading(false);
     };
 
 
