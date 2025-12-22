@@ -1,5 +1,6 @@
 import { Leaderboard as LeaderboardSection } from '@/components';
 import type { Metadata } from 'next';
+import styles from './leaderboard.module.css';
 
 export const metadata: Metadata = {
     title: 'Leaderboard - MLBattle',
@@ -8,7 +9,7 @@ export const metadata: Metadata = {
 
 export default function LeaderboardPage() {
     return (
-        <div style={{ paddingTop: '72px' }}>
+        <div className={styles.pageWrapper}>
             <LeaderboardSection />
         </div>
     );

@@ -33,8 +33,9 @@ export default function Leaderboard() {
     };
 
     return (
-        <section className={`section ${styles.leaderboard}`} id="leaderboard" style={{ position: 'relative' }}>
-            <div style={{ position: 'absolute', inset: 0, zIndex: 0, pointerEvents: 'none' }}>
+        <section className={styles.leaderboard}>
+            {/* Background Effect */}
+            <div className={styles.backgroundEffect}>
                 <Prism
                     animationType="rotate"
                     timeScale={0.5}
@@ -47,92 +48,87 @@ export default function Leaderboard() {
                     glow={1}
                 />
             </div>
-            <div className="container" style={{ position: 'relative', zIndex: 1 }}>
-                <div className="section-header">
-                    <span className="section-label">Rankings</span>
-                    <h2 className="section-title">Global Leaderboard</h2>
-                    <p className="section-description">
+
+            {/* Content */}
+            <div className={styles.content}>
+                {/* Page Header */}
+                <header className={styles.pageHeader}>
+                    <h1 className={styles.pageTitle}>Global Leaderboard</h1>
+                    <p className={styles.pageSubtitle}>
                         Top performers ranked by ELO rating. Compete to climb the ranks!
                     </p>
-                </div>
+                </header>
 
-                <div className={styles.leaderboardContainer}>
-                    <div className={styles.leaderboardHeader}>
-                        <div className={styles.leaderboardTitle}>
-                            <h3>Top Competitors</h3>
+                {/* Leaderboard Card */}
+                <div className={styles.leaderboardCard}>
+                    <div className={styles.cardHeader}>
+                        <div className={styles.cardTitle}>
+                            <h2>Top Competitors</h2>
                             <span className={styles.liveIndicator}>
                                 <span className={styles.dot}></span>
                                 Live
                             </span>
                         </div>
-                        <button className="btn btn-secondary">View All Rankings</button>
+                        <Link href="/leaderboard" className={styles.viewAllBtn}>
+                            View All Rankings
+                        </Link>
                     </div>
 
                     {loading ? (
                         <div className={styles.loadingContainer}>
                             <div className={styles.loadingSpinner}></div>
                             <p>Fetching rankings...</p>
-                            <div className={styles.skeletonTable}>
-                                {[1, 2, 3, 4, 5].map(i => (
-                                    <div key={i} className={styles.skeletonRow}>
-                                        <div className={styles.skeletonRank}></div>
-                                        <div className={styles.skeletonUser}>
-                                            <div className={styles.skeletonAvatar}></div>
-                                            <div className={styles.skeletonName}></div>
-                                        </div>
-                                        <div className={styles.skeletonRating}></div>
-                                    </div>
-                                ))}
-                            </div>
                         </div>
-                    ) : (
-                        <table className={styles.leaderboardTable}>
-                            <thead>
-                                <tr>
-                                    <th>Rank</th>
-                                    <th>Competitor</th>
-                                    <th>ELO Rating</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {competitors.map((user, index) => {
-                                    const rank = index + 1;
-                                    return (
-                                        <tr key={user._id} className={rank <= 3 ? styles[`topRow${rank}`] : ''}>
-                                            <td>
-                                                <div className={`${styles.tableRank} ${rank <= 3 ? styles[`top${rank}`] : ''}`}>
-                                                    {rank === 1 && <span className={styles.medal}>🥇</span>}
-                                                    {rank === 2 && <span className={styles.medal}>🥈</span>}
-                                                    {rank === 3 && <span className={styles.medal}>🥉</span>}
-                                                    {rank > 3 && rank}
-                                                </div>
-                                            </td>
-                                            <td>
-                                                <Link href={`/profile/${user._id}`} className={styles.tableUserLink}>
-                                                    <div className={styles.tableUser}>
-                                                        <div className={`${styles.tableUserAvatar} ${rank <= 3 ? styles[`avatar${rank}`] : ''}`}>
-                                                            {getInitials(user.name)}
-                                                        </div>
-                                                        <div>
-                                                            <div className={styles.tableUserName}>
-                                                                {rank === 1 && <span className={styles.crown}>👑 </span>}
-                                                                {user.name}
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </Link>
-                                            </td>
-                                            <td><span className={`${styles.rating} ${rank <= 3 ? styles[`rating${rank}`] : ''}`}>{Math.round(user.elo)}</span></td>
-                                        </tr>
-                                    );
-                                })}
-                            </tbody>
-                        </table>
-                    )}
-
-                    {!loading && competitors.length === 0 && (
+                    ) : competitors.length === 0 ? (
                         <div className={styles.noResults}>
                             <p>No rankings available yet. Join an event and start competing!</p>
+                        </div>
+                    ) : (
+                        <div className={styles.tableWrapper}>
+                            <table className={styles.leaderboardTable}>
+                                <thead>
+                                    <tr>
+                                        <th>Rank</th>
+                                        <th>Competitor</th>
+                                        <th>ELO Rating</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {competitors.map((user, index) => {
+                                        const rank = index + 1;
+                                        return (
+                                            <tr key={user._id} className={rank <= 3 ? styles[`topRow${rank}`] : ''}>
+                                                <td>
+                                                    <div className={`${styles.rankBadge} ${rank <= 3 ? styles[`rank${rank}`] : ''}`}>
+                                                        {rank === 1 && <span className={styles.medal}>🥇</span>}
+                                                        {rank === 2 && <span className={styles.medal}>🥈</span>}
+                                                        {rank === 3 && <span className={styles.medal}>🥉</span>}
+                                                        {rank > 3 && rank}
+                                                    </div>
+                                                </td>
+                                                <td>
+                                                    <Link href={`/profile/${user._id}`} className={styles.userLink}>
+                                                        <div className={styles.userInfo}>
+                                                            <div className={`${styles.avatar} ${rank <= 3 ? styles[`avatar${rank}`] : ''}`}>
+                                                                {getInitials(user.name)}
+                                                            </div>
+                                                            <span className={styles.userName}>
+                                                                {rank === 1 && <span className={styles.crown}>👑 </span>}
+                                                                {user.name}
+                                                            </span>
+                                                        </div>
+                                                    </Link>
+                                                </td>
+                                                <td>
+                                                    <span className={`${styles.eloRating} ${rank <= 3 ? styles[`elo${rank}`] : ''}`}>
+                                                        {Math.round(user.elo)}
+                                                    </span>
+                                                </td>
+                                            </tr>
+                                        );
+                                    })}
+                                </tbody>
+                            </table>
                         </div>
                     )}
                 </div>

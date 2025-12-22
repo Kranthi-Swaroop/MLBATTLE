@@ -480,7 +480,7 @@ export default function EventDetailPage() {
                                             </tr>
                                         </thead>
                                         <tbody>
-                                            {comp.leaderboard.slice(0, 10).map((entry, idx) => (
+                                            {comp.leaderboard.slice(0, 50).map((entry, idx) => (
                                                 <tr key={idx} className={entry.platformUser ? styles.matchedUser : ''}>
                                                     <td>
                                                         <span className={`${styles.rank} ${idx < 3 ? styles[`top${idx + 1}`] : ''}`}>
@@ -708,11 +708,6 @@ function CompetitionCard({ competition, eventStatus, isRegistered, onRegister, i
                 </div>
                 <div className={styles.brutalistCardAlert}>{competition.title}</div>
             </div>
-            {isRegistered && (
-                <div className={styles.registrationBadge}>
-                    <span>✓ REGISTERED</span>
-                </div>
-            )}
             <div className={styles.brutalistCardMessage}>
                 {competition.description || 'Kaggle competition integrated with this event.'}
                 <div className={styles.brutalistCardStats}>

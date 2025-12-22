@@ -1,35 +1,59 @@
 .pill-nav-container {
-    position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
+    position: relative;
     z-index: 1000;
-    padding: 1rem 1.5rem;
+    padding: 0 1.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    max-width: 1400px;
+    margin: 0 auto;
+    background: transparent;
 }
 
 @media (max-width: 768px) {
     .pill-nav-container {
-        padding: 1rem;
+        padding: 0 1rem;
     }
+}
+
+.pill-logo-separate {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.75rem;
+    text-decoration: none;
+    transition: all 0.3s ease;
+    padding: 0.5rem;
+    border-radius: 12px;
+}
+
+.pill-logo-separate:hover {
+    transform: scale(1.05);
+}
+
+.pill-logo-separate .logo-image {
+    width: 80px;
+    height: 80px;
+    object-fit: contain;
+}
+
+.pill-logo-separate .logo-text {
+    font-size: 1.75rem;
+    font-weight: 900;
+    letter-spacing: 1px;
+    background: linear-gradient(135deg, #8B5CF6 0%, #EC4899 50%, #06B6D4 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
 }
 
 .pill-nav {
     --nav-h: 48px;
     --pill-pad-x: 20px;
     --pill-gap: 4px;
-    max-width: 1200px;
-    margin: 0 auto;
     display: flex;
     align-items: center;
-    justify-content: space-between;
     box-sizing: border-box;
-}
-
-@media (max-width: 768px) {
-    .pill-nav {
-        width: 100%;
-        justify-content: space-between;
-    }
 }
 
 .pill-nav-items {
@@ -37,46 +61,10 @@
     display: flex;
     align-items: center;
     height: var(--nav-h);
-    background: rgba(10, 10, 20, 0.6);
-    backdrop-filter: blur(20px);
-    border: 1px solid rgba(139, 92, 246, 0.2);
+    background: transparent;
+    border: none;
     border-radius: 9999px;
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
-}
-
-.pill-logo {
-    height: var(--nav-h);
-    border-radius: 9999px;
-    background: rgba(10, 10, 20, 0.6);
-    backdrop-filter: blur(20px);
-    border: 1px solid rgba(139, 92, 246, 0.2);
-    padding: 0 1.25rem;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    gap: 0.5rem;
-    overflow: hidden;
-    text-decoration: none;
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
-    transition: all 0.3s ease;
-}
-
-.pill-logo:hover {
-    border-color: rgba(139, 92, 246, 0.5);
-    box-shadow: 0 4px 20px rgba(139, 92, 246, 0.2);
-}
-
-.pill-logo .logo-icon {
-    font-size: 1.25rem;
-}
-
-.pill-logo .logo-text {
-    font-size: 1.125rem;
-    font-weight: 800;
-    background: linear-gradient(135deg, #8B5CF6 0%, #06B6D4 100%);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
+    box-shadow: none;
 }
 
 .nav-actions {

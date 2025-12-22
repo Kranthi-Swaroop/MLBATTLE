@@ -264,17 +264,17 @@ const PillNav: React.FC<PillNavProps> = ({
 
     return (
         <div className="pill-nav-container">
-            <nav className={`pill-nav ${className}`} aria-label="Primary" style={cssVars}>
-                <Link
-                    className="pill-logo"
-                    href="/"
-                    aria-label="Home"
-                    ref={logoRef}
-                >
-                    <span className="logo-icon">⚔️</span>
-                    <span className="logo-text">MLBattle</span>
-                </Link>
+            <Link
+                className="pill-logo-separate"
+                href="/"
+                aria-label="Home"
+                ref={logoRef}
+            >
+                <img src="/ml.png" alt="ML Battle Logo" className="logo-image" />
+                <span className="logo-text">ML-Battle</span>
+            </Link>
 
+            <nav className={`pill-nav ${className}`} aria-label="Primary" style={cssVars}>
                 <div className="pill-nav-items desktop-only" ref={navItemsRef}>
                     <ul className="pill-list" role="menubar">
                         {allNavItems.map((item: NavItemWithAction, i) => (

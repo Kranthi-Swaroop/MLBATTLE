@@ -1,6 +1,5 @@
 .discussionsPage {
     min-height: 100vh;
-    padding-top: 100px;
     padding-bottom: 2rem;
     position: relative;
 }
@@ -411,10 +410,6 @@
 
 /* Mobile styles */
 @media (max-width: 640px) {
-    .discussionsPage {
-        padding-top: 80px;
-    }
-
     .header {
         flex-direction: column;
         align-items: flex-start;

@@ -10,7 +10,6 @@
     align-items: center;
     justify-content: center;
     gap: 1rem;
-    padding-top: 80px;
 }
 
 .notFound h1 {
@@ -27,7 +26,6 @@
 .heroBanner {
     min-height: 500px;
     position: relative;
-    padding-top: 80px;
     overflow: hidden;
     perspective: 1000px;
     background: var(--bg-primary);
@@ -1007,7 +1005,6 @@
 @media (max-width: 480px) {
     .heroBanner {
         min-height: 450px;
-        padding-top: 60px;
     }
 
     .heroOverlay {
