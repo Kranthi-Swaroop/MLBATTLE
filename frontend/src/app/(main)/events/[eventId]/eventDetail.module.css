@@ -26,14 +26,19 @@
 .heroBanner {
     min-height: 500px;
     position: relative;
-    overflow: hidden;
+    overflow: visible;
     perspective: 1000px;
     background: var(--bg-primary);
+    margin-top: -100px;
+    padding-top: 100px;
 }
 
 .floatingLinesWrapper {
     position: absolute;
-    inset: 0;
+    top: -100px;
+    left: 0;
+    right: 0;
+    bottom: 0;
     z-index: 0;
 }
 
