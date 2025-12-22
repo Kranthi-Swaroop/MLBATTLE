@@ -1,5 +1,6 @@
 .card {
-  width: 280px;
+  width: 100%;
+  max-width: 280px;
   height: 280px;
   background: white;
   border-radius: 32px;
@@ -89,7 +90,7 @@
 
 .card .bottom .content .role {
   display: block;
-  font-size: 0.75rem;
+  font-size: 0.9rem;
   color: rgba(255, 255, 255, 0.8);
   margin-top: 0.25rem;
   font-weight: 600;

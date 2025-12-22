@@ -11,7 +11,7 @@ const router = express.Router();
 router.get('/', protect, async (req, res) => {
     try {
         const user = await User.findById(req.user._id).select('-password');
-        
+
         if (!user) {
             return res.status(404).json({
                 success: false,
@@ -25,6 +25,33 @@ router.get('/', protect, async (req, res) => {
         });
     } catch (error) {
         console.error('Get profile error:', error);
+        res.status(500).json({
+            success: false,
+            message: 'Server error'
+        });
+    }
+});
+
+// @route   GET /api/profile/:id
+// @desc    Get public profile by user ID
+// @access  Public
+router.get('/:id', async (req, res) => {
+    try {
+        const user = await User.findById(req.params.id).select('-password -email');
+
+        if (!user) {
+            return res.status(404).json({
+                success: false,
+                message: 'User not found'
+            });
+        }
+
+        res.json({
+            success: true,
+            data: user
+        });
+    } catch (error) {
+        console.error('Get public profile error:', error);
         res.status(500).json({
             success: false,
             message: 'Server error'

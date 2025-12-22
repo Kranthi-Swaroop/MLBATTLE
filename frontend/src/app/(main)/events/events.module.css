@@ -6,14 +6,76 @@
     overflow: hidden;
 }
 
+/* Keyframe Animations */
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(40px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+
+    to {
+        opacity: 1;
+    }
+}
+
+@keyframes scaleIn {
+    from {
+        opacity: 0;
+        transform: scale(0.95);
+    }
+
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+@keyframes slideInLeft {
+    from {
+        opacity: 0;
+        transform: translateX(-40px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+@keyframes titleGlow {
+
+    0%,
+    100% {
+        filter: drop-shadow(0 0 20px rgba(139, 92, 246, 0.3));
+    }
+
+    50% {
+        filter: drop-shadow(0 0 40px rgba(6, 182, 212, 0.4));
+    }
+}
+
 .eventsHeader {
-    background: linear-gradient(135deg, rgba(139, 92, 246, 0.15) 0%, rgba(6, 182, 212, 0.15) 100%);
+    background: linear-gradient(135deg, rgba(139, 92, 246, 0.25) 0%, rgba(6, 182, 212, 0.2) 100%);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
     border-bottom: 2px solid rgba(139, 92, 246, 0.3);
     padding: 3rem 0;
     margin-bottom: 2rem;
     position: relative;
     z-index: 1;
     box-shadow: rgba(139, 92, 246, 0.2) 0px 20px 30px -10px;
+    animation: fadeIn 0.8s ease-out;
 }
 
 .eventsHeader h1 {
@@ -21,11 +83,15 @@
     margin-bottom: 0.5rem;
     color: var(--text-primary);
     font-weight: 800;
+    text-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
+    animation: fadeInUp 0.8s ease-out 0.1s backwards, titleGlow 3s ease-in-out infinite;
 }
 
 .eventsHeader p {
-    color: var(--text-secondary);
+    color: var(--text-primary);
     font-size: 1.125rem;
+    text-shadow: 0 1px 8px rgba(0, 0, 0, 0.4);
+    animation: fadeIn 1s ease-out 0.3s backwards;
 }
 
 .filtersSection {
@@ -41,6 +107,7 @@
     z-index: 1;
     box-shadow: rgba(139, 92, 246, 0.15) 0px 20px 30px -10px;
     transition: all 0.3s ease;
+    animation: scaleIn 0.6s ease-out 0.2s backwards;
 }
 
 .filtersSection:hover {
@@ -113,6 +180,23 @@
     font-weight: 600;
     cursor: pointer;
     transition: all 0.3s ease;
+    animation: scaleIn 0.4s ease-out backwards;
+}
+
+.filterPill:nth-child(1) {
+    animation-delay: 0.3s;
+}
+
+.filterPill:nth-child(2) {
+    animation-delay: 0.4s;
+}
+
+.filterPill:nth-child(3) {
+    animation-delay: 0.5s;
+}
+
+.filterPill:nth-child(4) {
+    animation-delay: 0.6s;
 }
 
 .filterPill:hover {
@@ -153,11 +237,12 @@
     color: var(--text-muted);
     position: relative;
     z-index: 1;
+    animation: fadeIn 0.6s ease-out 0.3s backwards;
 }
 
 .eventsGrid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
     gap: 2rem;
     padding-bottom: 3rem;
     position: relative;
@@ -176,6 +261,39 @@
     perspective: 1000px;
     position: relative;
     transform-style: preserve-3d;
+    animation: fadeInUp 0.6s ease-out backwards;
+}
+
+.cardParent:nth-child(1) {
+    animation-delay: 0.1s;
+}
+
+.cardParent:nth-child(2) {
+    animation-delay: 0.2s;
+}
+
+.cardParent:nth-child(3) {
+    animation-delay: 0.3s;
+}
+
+.cardParent:nth-child(4) {
+    animation-delay: 0.4s;
+}
+
+.cardParent:nth-child(5) {
+    animation-delay: 0.5s;
+}
+
+.cardParent:nth-child(6) {
+    animation-delay: 0.6s;
+}
+
+.cardParent:nth-child(7) {
+    animation-delay: 0.7s;
+}
+
+.cardParent:nth-child(8) {
+    animation-delay: 0.8s;
 }
 
 .eventCard {
@@ -472,6 +590,7 @@
     text-align: center;
     padding: 4rem 2rem;
     color: var(--text-muted);
+    animation: fadeInUp 0.6s ease-out;
 }
 
 .noResultsIcon {
@@ -514,6 +633,23 @@
 
     100% {
         background-position: 200% 0;
+    }
+}
+
+.loadingSpinner {
+    width: 48px;
+    height: 48px;
+    border: 4px solid rgba(139, 92, 246, 0.2);
+    border-top-color: var(--primary-500);
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+    margin: 0 auto 2rem;
+    grid-column: 1 / -1;
+}
+
+@keyframes spin {
+    to {
+        transform: rotate(360deg);
     }
 }
 

@@ -10,44 +10,37 @@ interface ProfileCardProps {
     image?: string;
     githubUrl?: string;
     twitterUrl?: string;
-    instagramUrl?: string;
+    linkedinUrl?: string;
     email?: string;
 }
 
-export default function ProfileCard({ 
-    name, 
-    role, 
+export default function ProfileCard({
+    name,
+    role,
     description,
-    image, 
-    githubUrl, 
-    twitterUrl, 
-    instagramUrl,
-    email 
+    image,
+    githubUrl,
+    twitterUrl,
+    linkedinUrl,
+    email
 }: ProfileCardProps) {
     return (
         <div className={styles.card}>
-            {email && (
-                <button className={styles.mail} onClick={() => window.location.href = `mailto:${email}`}>
-                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                        <rect width="20" height="16" x="2" y="4" rx="2"></rect>
-                        <path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"></path>
-                    </svg>
-                </button>
-            )}
+
             <div className={styles.profilePic}>
                 {image ? (
                     <Image src={image} alt={name} fill style={{ objectFit: 'cover' }} />
                 ) : (
-                <svg version="1.1" id="svg2" width="666.66669" height="666.66669" viewBox="0 0 666.66669 666.66669" xmlns="http://www.w3.org/2000/svg">
-                    <g transform="matrix(1.3333333,0,0,-1.3333333,0,666.66667)">
-                        <g transform="scale(0.1)">
-                            <path d="M 0,0 H 5000 V 5000 H 0 Z" style={{fill: '#fff8f6', fillOpacity: 1, fillRule: 'nonzero', stroke: 'none'}}></path>
-                            <path d="M 0,1126.2 H 4487.25 V 5000 H 0 Z" style={{fill: '#fef0ef', fillOpacity: 1, fillRule: 'nonzero', stroke: 'none'}}></path>
-                            <path d="M 5000,561.691 4487.25,1126.2 V 5000 H 5000 V 561.691" style={{fill: '#fde4e1', fillOpacity: 1, fillRule: 'nonzero', stroke: 'none'}}></path>
-                            <path d="M 4487.25,1146.2 5000,590.422 V 530.859 L 4487.25,1106.22 0,1106.2 v 40 h 4487.25" style={{fill: '#fcd0ce', fillOpacity: 1, fillRule: 'nonzero', stroke: 'none'}}></path>
+                    <svg version="1.1" id="svg2" width="666.66669" height="666.66669" viewBox="0 0 666.66669 666.66669" xmlns="http://www.w3.org/2000/svg">
+                        <g transform="matrix(1.3333333,0,0,-1.3333333,0,666.66667)">
+                            <g transform="scale(0.1)">
+                                <path d="M 0,0 H 5000 V 5000 H 0 Z" style={{ fill: '#fff8f6', fillOpacity: 1, fillRule: 'nonzero', stroke: 'none' }}></path>
+                                <path d="M 0,1126.2 H 4487.25 V 5000 H 0 Z" style={{ fill: '#fef0ef', fillOpacity: 1, fillRule: 'nonzero', stroke: 'none' }}></path>
+                                <path d="M 5000,561.691 4487.25,1126.2 V 5000 H 5000 V 561.691" style={{ fill: '#fde4e1', fillOpacity: 1, fillRule: 'nonzero', stroke: 'none' }}></path>
+                                <path d="M 4487.25,1146.2 5000,590.422 V 530.859 L 4487.25,1106.22 0,1106.2 v 40 h 4487.25" style={{ fill: '#fcd0ce', fillOpacity: 1, fillRule: 'nonzero', stroke: 'none' }}></path>
+                            </g>
                         </g>
-                    </g>
-                </svg>
+                    </svg>
                 )}
             </div>
             <div className={styles.bottom}>
@@ -58,10 +51,10 @@ export default function ProfileCard({
                 </div>
                 <div className={styles.bottomBottom}>
                     <div className={styles.socialLinksContainer}>
-                        {instagramUrl && (
-                            <a href={instagramUrl} target="_blank" rel="noopener noreferrer">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16">
-                                    <path d="M6-582H-2a4,4,0,0,1-4-4v-8a4,4,0,0,1,4-4H6a4,4,0,0,1,4,4v8A4,4,0,0,1,6-582ZM2-594a4,4,0,0,0-4,4,4,4,0,0,0,4,4,4,4,0,0,0,4-4A4.005,4.005,0,0,0,2-594Zm4.5-2a1,1,0,0,0-1,1,1,1,0,0,0,1,1,1,1,0,0,0,1-1A1,1,0,0,0,6.5-596ZM2-587.5A2.5,2.5,0,0,1-.5-590,2.5,2.5,0,0,1,2-592.5,2.5,2.5,0,0,1,4.5-590,2.5,2.5,0,0,1,2-587.5Z" transform="translate(6 598)"></path>
+                        {linkedinUrl && (
+                            <a href={linkedinUrl} target="_blank" rel="noopener noreferrer">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24">
+                                    <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"></path>
                                 </svg>
                             </a>
                         )}
@@ -80,7 +73,7 @@ export default function ProfileCard({
                             </a>
                         )}
                     </div>
-                    <button className={styles.button}>Contact Me</button>
+                    <button className={styles.button} onClick={() => email && window.open(`mailto:${email}`, '_blank')}>Contact Me</button>
                 </div>
             </div>
         </div>

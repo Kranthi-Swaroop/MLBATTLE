@@ -237,4 +237,33 @@ p {
   h2 {
     font-size: 1.75rem;
   }
+
+  .container {
+    padding: 0 var(--space-md);
+  }
+}
+
+@media (max-width: 480px) {
+  h1 {
+    font-size: 1.875rem;
+  }
+
+  h2 {
+    font-size: 1.5rem;
+  }
+
+  h3 {
+    font-size: 1.25rem;
+  }
+
+  .btn-lg {
+    padding: 0.875rem 1.5rem;
+    font-size: 0.9375rem;
+  }
+}
+
+/* Utility: Horizontal scroll wrapper */
+.scrollWrapper {
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
 }

@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import Link from 'next/link';
 import styles from './Leaderboard.module.css';
 import Prism from './Prism/Prism';
 import api, { UserProfile } from '@/lib/api';
@@ -69,7 +70,20 @@ export default function Leaderboard() {
 
                     {loading ? (
                         <div className={styles.loadingContainer}>
+                            <div className={styles.loadingSpinner}></div>
                             <p>Fetching rankings...</p>
+                            <div className={styles.skeletonTable}>
+                                {[1, 2, 3, 4, 5].map(i => (
+                                    <div key={i} className={styles.skeletonRow}>
+                                        <div className={styles.skeletonRank}></div>
+                                        <div className={styles.skeletonUser}>
+                                            <div className={styles.skeletonAvatar}></div>
+                                            <div className={styles.skeletonName}></div>
+                                        </div>
+                                        <div className={styles.skeletonRating}></div>
+                                    </div>
+                                ))}
+                            </div>
                         </div>
                     ) : (
                         <table className={styles.leaderboardTable}>
@@ -78,8 +92,6 @@ export default function Leaderboard() {
                                     <th>Rank</th>
                                     <th>Competitor</th>
                                     <th>ELO Rating</th>
-                                    <th>Competitions</th>
-                                    <th>Change</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -96,25 +108,21 @@ export default function Leaderboard() {
                                                 </div>
                                             </td>
                                             <td>
-                                                <div className={styles.tableUser}>
-                                                    <div className={`${styles.tableUserAvatar} ${rank <= 3 ? styles[`avatar${rank}`] : ''}`}>
-                                                        {getInitials(user.name)}
-                                                    </div>
-                                                    <div>
-                                                        <div className={styles.tableUserName}>
-                                                            {rank === 1 && <span className={styles.crown}>👑 </span>}
-                                                            {user.name}
+                                                <Link href={`/profile/${user._id}`} className={styles.tableUserLink}>
+                                                    <div className={styles.tableUser}>
+                                                        <div className={`${styles.tableUserAvatar} ${rank <= 3 ? styles[`avatar${rank}`] : ''}`}>
+                                                            {getInitials(user.name)}
+                                                        </div>
+                                                        <div>
+                                                            <div className={styles.tableUserName}>
+                                                                {rank === 1 && <span className={styles.crown}>👑 </span>}
+                                                                {user.name}
+                                                            </div>
                                                         </div>
                                                     </div>
-                                                </div>
+                                                </Link>
                                             </td>
                                             <td><span className={`${styles.rating} ${rank <= 3 ? styles[`rating${rank}`] : ''}`}>{Math.round(user.elo)}</span></td>
-                                            <td className={styles.score}>{user.eventsAttended} competitions</td>
-                                            <td>
-                                                <span className={`${styles.change} ${styles.neutral}`}>
-                                                    —
-                                                </span>
-                                            </td>
                                         </tr>
                                     );
                                 })}

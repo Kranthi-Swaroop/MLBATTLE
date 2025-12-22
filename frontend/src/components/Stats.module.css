@@ -77,6 +77,17 @@
 
 @media (max-width: 768px) {
     .statsGrid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: var(--space-md);
+    }
+
+    .statNumber {
+        font-size: 2rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .statsGrid {
         grid-template-columns: 1fr;
         max-width: 300px;
         margin: 0 auto;

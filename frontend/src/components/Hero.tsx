@@ -20,17 +20,13 @@ export default function Hero() {
             <Hyperspeed />
             <div className={`container ${styles.heroContent}`}>
                 <div className={styles.heroText}>
-                    <div className={styles.heroBadge}>
-                        <span className={styles.dot}></span>
-                        <span>Live Competitions Running Now</span>
-                    </div>
 
                     <h1>
                         Compete. Learn. <span className={styles.highlight}>Dominate ML.</span>
                     </h1>
 
                     <p className={styles.heroDescription}>
-                        Join thousands of data scientists and ML engineers competing in real-world challenges.
+                        Join a platform of data scientists and ML engineers competing in real-world challenges.
                         Track your progress with our ELO rating system and climb the global leaderboard.
                     </p>
 
@@ -45,9 +41,9 @@ export default function Hero() {
                         <div className={styles.featureItem}>
                             <div className={styles.featureIcon}>
                                 <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                                    <path d="M12 2L2 7l10 5 10-5-10-5z"/>
-                                    <path d="M2 17l10 5 10-5"/>
-                                    <path d="M2 12l10 5 10-5"/>
+                                    <path d="M12 2L2 7l10 5 10-5-10-5z" />
+                                    <path d="M2 17l10 5 10-5" />
+                                    <path d="M2 12l10 5 10-5" />
                                 </svg>
                             </div>
                             <div>
@@ -59,10 +55,10 @@ export default function Hero() {
                         <div className={styles.featureItem}>
                             <div className={styles.featureIcon}>
                                 <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                                    <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/>
-                                    <circle cx="9" cy="7" r="4"/>
-                                    <path d="M22 21v-2a4 4 0 0 0-3-3.87"/>
-                                    <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+                                    <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2" />
+                                    <circle cx="9" cy="7" r="4" />
+                                    <path d="M22 21v-2a4 4 0 0 0-3-3.87" />
+                                    <path d="M16 3.13a4 4 0 0 1 0 7.75" />
                                 </svg>
                             </div>
                             <div>
@@ -74,12 +70,12 @@ export default function Hero() {
                         <div className={styles.featureItem}>
                             <div className={styles.featureIcon}>
                                 <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                                    <path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"/>
-                                    <path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"/>
-                                    <path d="M4 22h16"/>
-                                    <path d="M10 14.66V17c0 .55-.47.98-.97 1.21C7.85 18.75 7 20.24 7 22"/>
-                                    <path d="M14 14.66V17c0 .55.47.98.97 1.21C16.15 18.75 17 20.24 17 22"/>
-                                    <path d="M18 2H6v7a6 6 0 0 0 12 0V2Z"/>
+                                    <path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6" />
+                                    <path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18" />
+                                    <path d="M4 22h16" />
+                                    <path d="M10 14.66V17c0 .55-.47.98-.97 1.21C7.85 18.75 7 20.24 7 22" />
+                                    <path d="M14 14.66V17c0 .55.47.98.97 1.21C16.15 18.75 17 20.24 17 22" />
+                                    <path d="M18 2H6v7a6 6 0 0 0 12 0V2Z" />
                                 </svg>
                             </div>
                             <div>
@@ -91,7 +87,7 @@ export default function Hero() {
                         <div className={styles.featureItem}>
                             <div className={styles.featureIcon}>
                                 <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                                    <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/>
+                                    <polyline points="22 12 18 12 15 21 9 3 6 12 2 12" />
                                 </svg>
                             </div>
                             <div>

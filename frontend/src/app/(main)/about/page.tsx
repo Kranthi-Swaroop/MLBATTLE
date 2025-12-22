@@ -31,26 +31,6 @@ export default function AboutPage() {
                     </p>
                 </section>
 
-                {/* Stats Banner */}
-                <div className={styles.statsBanner}>
-                    <div className={styles.statItem}>
-                        <div className={styles.statNumber}>500+</div>
-                        <div className={styles.statLabel}>Active Users</div>
-                    </div>
-                    <div className={styles.statItem}>
-                        <div className={styles.statNumber}>50+</div>
-                        <div className={styles.statLabel}>Competitions</div>
-                    </div>
-                    <div className={styles.statItem}>
-                        <div className={styles.statNumber}>1000+</div>
-                        <div className={styles.statLabel}>Submissions</div>
-                    </div>
-                    <div className={styles.statItem}>
-                        <div className={styles.statNumber}>100+</div>
-                        <div className={styles.statLabel}>Teams</div>
-                    </div>
-                </div>
-
                 {/* About the Platform */}
                 <section className={styles.section}>
                     <div className={styles.sectionHeader}>
@@ -64,14 +44,13 @@ export default function AboutPage() {
                         </h2>
                     </div>
                     <p className={styles.text}>
-                        MLBattle is a competitive machine learning platform designed to bring together students, researchers, 
-                        and ML enthusiasts in exciting data science competitions. Our platform provides a space where you can 
+                        MLBattle is a competitive machine learning platform designed to bring together students, researchers,
+                        and ML enthusiasts in exciting ML & data science competitions. Our platform provides a space where you can
                         test your skills, learn from others, and push the boundaries of what&apos;s possible with machine learning.
                     </p>
                     <p className={styles.text}>
-                        Whether you&apos;re a beginner taking your first steps in ML or an experienced practitioner looking for 
-                        challenging problems, MLBattle offers competitions tailored to all skill levels. Compete individually 
-                        or form teams, climb the leaderboard, and earn recognition for your achievements.
+                        Whether you&apos;re a beginner taking your first steps in ML or an experienced practitioner looking for
+                        challenging problems, MLBattle offers competitions tailored to all skill levels. Compete, climb the leaderboard, and earn recognition for your achievements.
                     </p>
                 </section>
 
@@ -89,12 +68,12 @@ export default function AboutPage() {
                             </div>
                             KALI Club
                         </h2>
-                        <h3 className={styles.subtitle}>Knowledge in Artificial and Learning Intelligence</h3>
+                        <h3 className={styles.subtitle}>Knowledge in Artificial Intelligence and Learning Innovation</h3>
                     </div>
                     <p className={styles.text}>
-                        KALI (Knowledge in Artificial and Learning Intelligence) is a student-driven club dedicated to 
-                        fostering a community passionate about artificial intelligence, machine learning, and data science. 
-                        We believe in learning by doing, and MLBattle is our flagship platform to provide hands-on 
+                        KALI (Knowledge in Artificial Intelligence and Learning Innovation) is a student-driven group dedicated to
+                        fostering a community passionate about artificial intelligence, machine learning, and data science.
+                        We believe in learning by doing, and MLBattle is our flagship platform to provide hands-on
                         competitive experience.
                     </p>
                     <div className={styles.featuresGrid}>
@@ -134,7 +113,7 @@ export default function AboutPage() {
                             How MLBattle Works
                         </h2>
                     </div>
-                    
+
                     <div className={styles.stepsContainer}>
                         <div className={styles.step}>
                             <div className={styles.stepNumber}>1</div>
@@ -190,8 +169,8 @@ export default function AboutPage() {
                         <div>
                             <h3>Powered by Kaggle Integration</h3>
                             <p>
-                                MLBattle leverages Kaggle&apos;s robust API for competition hosting and evaluation. 
-                                This integration ensures reliable scoring, fair competition, and access to industry-standard 
+                                MLBattle leverages Kaggle&apos;s robust API for competition hosting and evaluation.
+                                This integration ensures reliable scoring, fair competition, and access to industry-standard
                                 ML competition infrastructure.
                             </p>
                         </div>
@@ -216,33 +195,25 @@ export default function AboutPage() {
                     <div className={styles.teamGrid}>
                         <ProfileCard
                             name="Aditya Kumar Sahu"
-                            role="UI/UX & Frontend Architecture"
+                            role="UI/UX & Frontend Architect"
                             description="B.Tech CSE'28 NIT Raipur"
                             image="/profile1.jpg"
                             githubUrl="https://github.com/CodedByAd1"
                             twitterUrl="https://x.com/e_boyadi"
-                            instagramUrl="https://www.instagram.com/aditya._.245/"
+                            linkedinUrl="https://www.linkedin.com/in/aditya-kumar-sahu-329084330/"
                             email="adityasahu0204@gmail.com"
                         />
                         <ProfileCard
                             name="B. Kranthi Swaroop"
-                            role="Server & API Development"
+                            role="Backend & API Developer"
                             description="B.Tech CSE'28 NIT Raipur"
-                            image="/profile2.jpg"
+                            image="/profile5.png"
                             githubUrl="https://github.com/Kranthi-Swaroop"
-                            twitterUrl="https://x.com/e_boyadi"
-                            instagramUrl="https://instagram.com"
-                            email="backend@mlbattle.com"
+                            twitterUrl="https://x.com/"
+                            linkedinUrl="https://www.linkedin.com/in/b-kranthi-swaroop/"
+                            email="kranthi203s@gmail.com"
                         />
                     </div>
-                </section>
-
-                {/* CTA Section */}
-                <section className={styles.ctaSection}>
-                    <h2 className={styles.ctaTitle}>Ready to Start Competing?</h2>
-                    <p className={styles.ctaText}>
-                        Join MLBattle today and be part of the next generation of ML practitioners.
-                    </p>
                 </section>
             </div>
         </div>

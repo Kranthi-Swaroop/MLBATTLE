@@ -109,6 +109,10 @@ class ApiService {
         return this.request('/profile');
     }
 
+    async getPublicProfile(userId: string): Promise<ApiResponse<UserProfile>> {
+        return this.request(`/profile/${userId}`);
+    }
+
     async updateProfile(data: {
         name?: string;
         bio?: string;

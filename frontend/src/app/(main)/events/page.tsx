@@ -2,9 +2,11 @@
 
 import { useState, useEffect, useRef } from 'react';
 import Link from 'next/link';
+import dynamic from 'next/dynamic';
 import styles from './events.module.css';
-import Squares from '@/components/Squares';
 import api, { UserProfile } from '@/lib/api';
+
+const LightPillar = dynamic(() => import('@/components/LightPillar'), { ssr: false });
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000/api';
 
@@ -145,6 +147,21 @@ export default function EventsPage() {
     if (loading) {
         return (
             <div className={styles.eventsPage}>
+                <div style={{ position: 'fixed', inset: 0, zIndex: 0, pointerEvents: 'none' }}>
+                    <LightPillar
+                        topColor="#5227FF"
+                        bottomColor="#FF9FFC"
+                        intensity={0.75}
+                        rotationSpeed={0.3}
+                        glowAmount={0.005}
+                        pillarWidth={4.2}
+                        pillarHeight={0.4}
+                        noiseIntensity={0.5}
+                        pillarRotation={45}
+                        interactive={false}
+                        mixBlendMode="normal"
+                    />
+                </div>
                 <div className={styles.eventsHeader}>
                     <div className="container">
                         <h1>Events</h1>
@@ -153,6 +170,7 @@ export default function EventsPage() {
                 </div>
                 <div className="container">
                     <div className={styles.loadingGrid}>
+                        <div className={styles.loadingSpinner}></div>
                         {[1, 2, 3].map(i => (
                             <div key={i} className={styles.loadingCard}></div>
                         ))}
@@ -164,13 +182,21 @@ export default function EventsPage() {
 
     return (
         <div className={styles.eventsPage}>
-            <Squares
-                direction="diagonal"
-                speed={0.5}
-                borderColor="rgba(139, 92, 246, 0.3)"
-                squareSize={50}
-                hoverFillColor="rgba(224, 86, 240)"
-            />
+            <div style={{ position: 'fixed', inset: 0, zIndex: 0, pointerEvents: 'none' }}>
+                <LightPillar
+                    topColor="#5227FF"
+                    bottomColor="#FF9FFC"
+                    intensity={0.75}
+                    rotationSpeed={0.3}
+                    glowAmount={0.005}
+                    pillarWidth={4.2}
+                    pillarHeight={0.4}
+                    noiseIntensity={0.5}
+                    pillarRotation={45}
+                    interactive={false}
+                    mixBlendMode="normal"
+                />
+            </div>
             <div className={styles.eventsHeader}>
                 <div className="container">
                     <div className={styles.headerTop}>

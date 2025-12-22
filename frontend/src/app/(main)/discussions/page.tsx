@@ -2,11 +2,9 @@
 
 import { useState, useEffect, useRef } from 'react';
 import { io, Socket } from 'socket.io-client';
-import dynamic from 'next/dynamic';
 import api from '@/lib/api';
 import styles from './discussions.module.css';
-
-const Galaxy = dynamic(() => import('@/components/Galaxy'), { ssr: false });
+import Squares from '@/components/Squares';
 
 interface Message {
     _id: string;
@@ -91,7 +89,7 @@ export default function DiscussionsPage() {
         setError('');
 
         const response = await api.sendMessage(newMessage.trim());
-        
+
         if (response.success) {
             setNewMessage('');
             inputRef.current?.focus();
@@ -119,11 +117,11 @@ export default function DiscussionsPage() {
         if (diffMins < 1) return 'just now';
         if (diffMins < 60) return `${diffMins}m ago`;
         if (diffHours < 24) return `${diffHours}h ago`;
-        
-        return date.toLocaleTimeString('en-US', { 
-            hour: '2-digit', 
+
+        return date.toLocaleTimeString('en-US', {
+            hour: '2-digit',
             minute: '2-digit',
-            hour12: true 
+            hour12: true
         });
     };
 
@@ -133,7 +131,7 @@ export default function DiscussionsPage() {
 
     const getAvatarColor = (name: string) => {
         const colors = [
-            '#8B5CF6', '#EC4899', '#06B6D4', '#10B981', 
+            '#8B5CF6', '#EC4899', '#06B6D4', '#10B981',
             '#F59E0B', '#EF4444', '#3B82F6', '#14B8A6'
         ];
         const index = name.charCodeAt(0) % colors.length;
@@ -142,16 +140,13 @@ export default function DiscussionsPage() {
 
     return (
         <div className={styles.discussionsPage}>
-            <div className={styles.galaxyBackground}>
-                <Galaxy
-                    mouseRepulsion={true}
-                    mouseInteraction={true}
-                    density={0.5}
-                    glowIntensity={0.3}
-                    saturation={0.8}
-                    hueShift={200}
-                />
-            </div>
+            <Squares
+                direction="diagonal"
+                speed={0.5}
+                borderColor="rgba(139, 92, 246, 0.3)"
+                squareSize={50}
+                hoverFillColor="rgba(224, 86, 240)"
+            />
 
             <div className={styles.container}>
                 <div className={styles.header}>
@@ -177,6 +172,17 @@ export default function DiscussionsPage() {
                             <div className={styles.loading}>
                                 <div className={styles.spinner}></div>
                                 <p>Loading messages...</p>
+                                <div className={styles.skeletonMessages}>
+                                    {[1, 2, 3, 4].map(i => (
+                                        <div key={i} className={styles.skeletonMessage}>
+                                            <div className={styles.skeletonAvatar}></div>
+                                            <div className={styles.skeletonContent}>
+                                                <div className={styles.skeletonHeader}></div>
+                                                <div className={styles.skeletonText}></div>
+                                            </div>
+                                        </div>
+                                    ))}
+                                </div>
                             </div>
                         ) : messages.length === 0 ? (
                             <div className={styles.empty}>
@@ -187,11 +193,11 @@ export default function DiscussionsPage() {
                         ) : (
                             <div className={styles.messagesList}>
                                 {messages.map((msg) => (
-                                    <div 
-                                        key={msg._id} 
+                                    <div
+                                        key={msg._id}
                                         className={`${styles.message} ${msg.user === currentUserId ? styles.ownMessage : ''}`}
                                     >
-                                        <div 
+                                        <div
                                             className={styles.avatar}
                                             style={{ backgroundColor: getAvatarColor(msg.userName) }}
                                         >
@@ -205,7 +211,7 @@ export default function DiscussionsPage() {
                                                 </span>
                                                 <span className={styles.time}>{formatTime(msg.createdAt)}</span>
                                                 {msg.user === currentUserId && (
-                                                    <button 
+                                                    <button
                                                         className={styles.deleteBtn}
                                                         onClick={() => handleDeleteMessage(msg._id)}
                                                         title="Delete message"
@@ -228,7 +234,7 @@ export default function DiscussionsPage() {
                     <div className={styles.inputArea}>
                         {isLoggedIn ? (
                             <form onSubmit={handleSendMessage} className={styles.inputForm}>
-                                <div 
+                                <div
                                     className={styles.inputAvatar}
                                     style={{ backgroundColor: getAvatarColor(currentUserName) }}
                                 >
@@ -244,8 +250,8 @@ export default function DiscussionsPage() {
                                     disabled={isSending}
                                     className={styles.input}
                                 />
-                                <button 
-                                    type="submit" 
+                                <button
+                                    type="submit"
                                     disabled={isSending || !newMessage.trim()}
                                     className={styles.sendButton}
                                 >

@@ -4,6 +4,8 @@
 }
 
 .leaderboardContainer {
+    max-width: 900px;
+    margin: 0 auto;
     background: linear-gradient(145deg, rgba(17, 24, 39, 0.4) 0%, rgba(31, 41, 55, 0.3) 100%);
     backdrop-filter: blur(30px) saturate(180%);
     -webkit-backdrop-filter: blur(30px) saturate(180%);
@@ -128,28 +130,51 @@
     border-collapse: collapse;
 }
 
-.leaderboardTable th {
-    padding: 1.25rem 2.5rem;
+.leaderboardTable th,
+.leaderboardTable td {
+    padding: 1.25rem 2rem;
     text-align: left;
-    font-size: 0.75rem;
+    vertical-align: middle;
+}
+
+.leaderboardTable th {
+    font-size: 0.8rem;
     font-weight: 700;
     color: rgba(139, 92, 246, 0.95);
     text-transform: uppercase;
     letter-spacing: 1px;
     background: rgba(255, 255, 255, 0.03);
+    white-space: nowrap;
 }
 
 .leaderboardTable td {
-    padding: 1.5rem 2.5rem;
     border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+/* Rank column */
+.leaderboardTable th:first-child,
+.leaderboardTable td:first-child {
+    text-align: center;
+    width: 120px;
+}
+
+/* ELO Rating column */
+.leaderboardTable th:last-child,
+.leaderboardTable td:last-child {
+    text-align: right;
+    width: 180px;
 }
 
 .leaderboardTable tbody tr {
     transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Left border highlight on first cell instead of tr::before */
+.leaderboardTable tbody td:first-child {
     position: relative;
 }
 
-.leaderboardTable tbody tr::before {
+.leaderboardTable tbody td:first-child::before {
     content: '';
     position: absolute;
     left: 0;
@@ -163,12 +188,10 @@
 
 .leaderboardTable tbody tr:hover {
     background: linear-gradient(90deg, rgba(139, 92, 246, 0.12) 0%, rgba(139, 92, 246, 0.03) 100%);
-    transform: translateX(8px);
     box-shadow: inset 0 0 20px rgba(139, 92, 246, 0.08);
-    backdrop-filter: blur(10px);
 }
 
-.leaderboardTable tbody tr:hover::before {
+.leaderboardTable tbody tr:hover td:first-child::before {
     opacity: 1;
 }
 
@@ -267,17 +290,17 @@
     background: linear-gradient(90deg, rgba(251, 146, 60, 0.06) 0%, transparent 100%) !important;
 }
 
-.topRow1::before {
+.topRow1 td:first-child::before {
     background: linear-gradient(180deg, #FCD34D, #F59E0B) !important;
     opacity: 1 !important;
 }
 
-.topRow2::before {
+.topRow2 td:first-child::before {
     background: linear-gradient(180deg, #E2E8F0, #94A3B8) !important;
     opacity: 1 !important;
 }
 
-.topRow3::before {
+.topRow3 td:first-child::before {
     background: linear-gradient(180deg, #FDBA74, #F97316) !important;
     opacity: 1 !important;
 }
@@ -363,6 +386,22 @@
     display: flex;
     align-items: center;
     gap: var(--space-md);
+}
+
+.tableUserLink {
+    text-decoration: none;
+    color: inherit;
+    display: block;
+    transition: all 0.2s ease;
+}
+
+.tableUserLink:hover .tableUserName {
+    color: rgba(139, 92, 246, 1);
+}
+
+.tableUserLink:hover .tableUserAvatar {
+    transform: scale(1.1);
+    box-shadow: 0 6px 24px rgba(139, 92, 246, 0.6);
 }
 
 .tableUserAvatar {
@@ -469,6 +508,21 @@
     transform: scale(1.1);
 }
 
+/* Table Wrapper for horizontal scroll on mobile */
+.tableWrapper {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+}
+
+@media (max-width: 1024px) {
+    .leaderboardHeader {
+        flex-direction: column;
+        gap: 1rem;
+        align-items: flex-start;
+        padding: 1.5rem;
+    }
+}
+
 @media (max-width: 768px) {
 
     .leaderboardTable th:nth-child(4),
@@ -476,6 +530,41 @@
     .leaderboardTable th:nth-child(5),
     .leaderboardTable td:nth-child(5) {
         display: none;
+    }
+
+    .leaderboardTable th,
+    .leaderboardTable td {
+        padding: 1rem 1.25rem;
+    }
+
+    .leaderboardTable {
+        min-width: 500px;
+    }
+
+    .tableRank {
+        width: 36px;
+        height: 36px;
+        font-size: 0.9rem;
+    }
+
+    .tableUserAvatar {
+        width: 40px;
+        height: 40px;
+    }
+
+    .leaderboardTitle h3 {
+        font-size: 1.25rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .leaderboardHeader {
+        padding: 1.25rem 1rem;
+    }
+
+    .leaderboardTable th,
+    .leaderboardTable td {
+        padding: 0.875rem 1rem;
     }
 }
 
@@ -486,6 +575,99 @@
     color: var(--text-muted);
     font-size: 1.125rem;
     font-weight: 500;
+}
+
+.loadingContainer {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1.5rem;
+}
+
+.loadingSpinner {
+    width: 48px;
+    height: 48px;
+    border: 4px solid rgba(139, 92, 246, 0.2);
+    border-top-color: var(--primary-500);
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+.skeletonTable {
+    width: 100%;
+    max-width: 700px;
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+}
+
+.skeletonRow {
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+    padding: 1rem 1.5rem;
+    background: rgba(255, 255, 255, 0.03);
+    border-radius: var(--radius-lg);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.skeletonRank {
+    width: 44px;
+    height: 44px;
+    border-radius: var(--radius-lg);
+    background: linear-gradient(90deg, rgba(139, 92, 246, 0.1) 25%, rgba(139, 92, 246, 0.2) 50%, rgba(139, 92, 246, 0.1) 75%);
+    background-size: 200% 100%;
+    animation: shimmer 1.5s infinite;
+}
+
+.skeletonUser {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    flex: 1;
+}
+
+.skeletonAvatar {
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    background: linear-gradient(90deg, rgba(139, 92, 246, 0.1) 25%, rgba(139, 92, 246, 0.2) 50%, rgba(139, 92, 246, 0.1) 75%);
+    background-size: 200% 100%;
+    animation: shimmer 1.5s infinite;
+}
+
+.skeletonName {
+    width: 150px;
+    height: 20px;
+    border-radius: var(--radius-md);
+    background: linear-gradient(90deg, rgba(139, 92, 246, 0.1) 25%, rgba(139, 92, 246, 0.2) 50%, rgba(139, 92, 246, 0.1) 75%);
+    background-size: 200% 100%;
+    animation: shimmer 1.5s infinite;
+}
+
+.skeletonRating {
+    width: 80px;
+    height: 32px;
+    border-radius: var(--radius-full);
+    background: linear-gradient(90deg, rgba(139, 92, 246, 0.1) 25%, rgba(139, 92, 246, 0.2) 50%, rgba(139, 92, 246, 0.1) 75%);
+    background-size: 200% 100%;
+    animation: shimmer 1.5s infinite;
+}
+
+@keyframes shimmer {
+    0% {
+        background-position: -200% 0;
+    }
+
+    100% {
+        background-position: 200% 0;
+    }
 }
 
 .noResults p {
