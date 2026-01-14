@@ -1,4 +1,4 @@
-# ⚔️ MLBattle: Competitive Data Science Arena
+# ⚔️ MLBattle: A Unified ML & Data Science Arena
 
 > **A real-time, gamified platform for data science competitions, bridging the gap between Kaggle and competitive gaming.**
 
