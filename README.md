@@ -116,4 +116,4 @@ Located in `backend/src/services/eloService.js`:
 This project is licensed under the MIT License.
 
 ---
-*Built with ❤️ by Kranthi Swaroop*
+*Built with ❤️ by Kranthi Swaroop and Aditya Kumar Sahu*
